@@ -1290,7 +1290,6 @@ def gerenciar_solicitacoes(request):
             ])
 
         return response
-    # 🔚 Renderiza página com filtros e paginação
     return render(request, 'estoque/gerenciar_solicitacoes.html', {
         'solicitacoes': solicitacoes,
         'status_atual': status or 'TODOS',
@@ -1299,5 +1298,45 @@ def gerenciar_solicitacoes(request):
         'data_inicio': data_inicio or '',
         'data_fim': data_fim or '',
     })
+# views.py
+from django.shortcuts import render, get_object_or_404, redirect
+from django.contrib.auth.decorators import login_required
+from django.http import JsonResponse
+from .models import Produto, Movimentacao
+from django.contrib.auth.models import Group
+
+@login_required
+def produto_qr_view(request, produto_id):
+    try:
+        produto = Produto.objects.get(id=produto_id)
+    except Produto.DoesNotExist:
+        return render(request, 'estoque/erro_produto_nao_encontrado.html', status=404)
+    if not request.user.is_superuser:
+        user_groups = request.user.groups.all()
+        if produto.setor_responsavel not in user_groups:
+            return render(request, 'estoque/erro_permissao.html', {'produto': produto})
+
+    if request.method == 'POST':
+        quantidade = int(request.POST.get('quantidade', 0))
+        if quantidade <= 0:
+            return render(request, 'estoque/produto_qr.html', {'produto': produto, 'erro': 'Quantidade inválida.'})
+        if quantidade > produto.quantidade:
+            return render(request, 'estoque/produto_qr.html', {'produto': produto, 'erro': 'Quantidade insuficiente.'})
+
+       
+        produto.quantidade -= quantidade
+        produto.save()
+
+        Movimentacao.objects.create(
+            produto=produto,
+            usuario=request.user,
+            tipo='saida',
+            quantidade=quantidade
+        )
+
+        return render(request, 'estoque/produto_qr.html', {'produto': produto, 'sucesso': 'Retirada realizada com sucesso!'})
+
+    return render(request, 'estoque/produto_qr.html', {'produto': produto})
+
 
 

@@ -137,3 +137,4 @@ EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'fabio.fernandes@libanoeducacional.com.br'
 EMAIL_HOST_PASSWORD = 'inxl clbf xzcz uotj'  # ⚠️ Apenas para testes!
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+SITE_URL = "http://182.16.0.251:8000"#mude ao mudar o ip do sistema

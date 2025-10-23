@@ -55,6 +55,7 @@ urlpatterns = [
     path('atualizar-avatar/', views.atualizar_avatar, name='atualizar_avatar'),
     path('solicitar-compra/', views.solicitar_compra, name='solicitar_compra'),
 path('gerenciar-solicitacoes/', views.gerenciar_solicitacoes, name='gerenciar_solicitacoes'),
+    path('produto/<int:produto_id>/', views.produto_qr_view, name='produto_qr_view'),
 
 ]
 from estoque import views  # importe a view de erro do seu app

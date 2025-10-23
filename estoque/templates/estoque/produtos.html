@@ -18,34 +18,46 @@
 
 <div class="table-container">
     <table class="products-table">
-        <thead>
-            <tr>
-                <th>Nome</th>
-                <th>Quantidade</th>
-                <th>Setor</th>
-                <th>Observações</th>
-                <th>Ações</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for produto in produtos %}
-            <tr>
-                <td>{{ produto.nome }}</td>
-                <td id="quantidade-{{ produto.id }}">{{ produto.quantidade }}</td>
-                <td>{{ produto.setor_responsavel.name }}</td>
-                <td>{{ produto.observacoes }}</td>
-                <td>
-                    <button class="action-btn" onclick="abrirModal({{ produto.id }}, '{{ produto.nome }}')">Retirar</button>
-                </td>
-            </tr>
-            {% empty %}
-            <tr>
-                <td colspan="5" style="text-align:center; padding:40px; color:#666;">
-                    Nenhum produto encontrado neste setor
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
+<thead>
+  <tr>
+    <th>Nome</th>
+    <th>Quantidade</th>
+    <th>Setor</th>
+    <th>Observações</th>
+    <th>QR Code</th>
+    <th>Ações</th>
+  </tr>
+</thead>
+
+<tbody>
+  {% for produto in produtos %}
+  <tr>
+    <td>{{ produto.nome }}</td>
+    <td id="quantidade-{{ produto.id }}">{{ produto.quantidade }}</td>
+    <td>{{ produto.setor_responsavel.name }}</td>
+    <td>{{ produto.observacoes }}</td>
+    <td>
+      {% if produto.qrcode_imagem %}
+        <a href="{{ produto.qrcode_imagem.url }}" download>
+          <img src="{{ produto.qrcode_imagem.url }}" alt="QR Code" width="60" height="60">
+        </a>
+      {% else %}
+        <span style="color:#999;">Não gerado</span>
+      {% endif %}
+    </td>
+    <td>
+      <button class="action-btn" onclick="abrirModal({{ produto.id }}, '{{ produto.nome }}')">Retirar</button>
+    </td>
+  </tr>
+  {% empty %}
+  <tr>
+    <td colspan="6" style="text-align:center; padding:40px; color:#666;">
+      Nenhum produto encontrado neste setor
+    </td>
+  </tr>
+  {% endfor %}
+</tbody>
+
     </table>
 
     <div style="margin-top:20px; display:flex; gap:8px; justify-content:center;">

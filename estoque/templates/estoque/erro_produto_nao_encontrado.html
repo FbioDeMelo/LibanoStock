@@ -1,0 +1,93 @@
+{% extends 'base.html' %}
+{% block title %}Produto não encontrado{% endblock %}
+
+{% block content %}
+<div style="text-align:center; padding:50px;">
+  <h1 style="color:#c00;">Produto não encontrado 😕</h1>
+  <p>O produto que você tentou acessar não existe ou foi removido do sistema.</p>
+  <a href="{% url 'index' %}" class="action-btn" style="margin-top:20px;">Voltar ao Início</a>
+</div>
+<script>
+  // --- NOTIFICAÇÕES (resto igual) ---
+  function toggleNotificacoes() {
+    const container = document.getElementById('notificacoes-container');
+    container.style.display = container.style.display === 'block' ? 'none' : 'block';
+  }
+
+  function atualizarNotificacoes() {
+    fetch("{% url 'notificacoes' %}")
+      .then(res => res.json())
+      .then(data => {
+        const container = document.getElementById('notificacoes-container');
+        const dropdown = document.getElementById('notificacoes-dropdown');
+        container.innerHTML = '';
+
+        if (data.notificacoes.length === 0) {
+          container.innerHTML = '<p style="padding:10px;">Nenhuma notificação</p>';
+          dropdown.classList.remove('has-notifications');
+        } else {
+          dropdown.classList.add('has-notifications');
+          data.notificacoes.forEach(n => {
+            const div = document.createElement('div');
+            div.classList.add('notif-item');
+            div.style.padding = '10px';
+            div.style.borderBottom = '1px solid #eee';
+            div.style.display = 'flex';
+            div.style.justifyContent = 'space-between';
+            div.style.alignItems = 'center';
+            div.innerHTML = `
+              <span>${n.mensagem}</span>
+              <button style="background:#ea005f;color:white;border:none;padding:4px 8px;border-radius:3px;cursor:pointer;" onclick="marcarVista(${n.id})">✔</button>
+            `;
+            container.appendChild(div);
+          });
+        }
+      });
+  }
+
+  function marcarVista(id) {
+    fetch("{% url 'marcar_vista' %}", {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'X-CSRFToken': '{{ csrf_token }}'
+      },
+      body: 'id=' + id
+    })
+    .then(res => res.json())
+    .then(data => {
+      if(data.success) atualizarNotificacoes();
+      else alert(data.error);
+    });
+  }
+
+  setInterval(atualizarNotificacoes, 30000);
+  window.onload = atualizarNotificacoes;
+    // --- MODAL DE AVATAR ---
+  function openAvatarModal() {
+    document.getElementById('avatarModal').style.display = 'block';
+  }
+
+  function closeAvatarModal() {
+    document.getElementById('avatarModal').style.display = 'none';
+  }
+
+  function setAvatar(src) {
+    document.getElementById('user-avatar').src = src;
+    closeAvatarModal();
+
+    fetch("{% url 'atualizar_avatar' %}", {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'X-CSRFToken': '{{ csrf_token }}'
+      },
+      body: 'avatar=' + encodeURIComponent(src)
+    })
+    .then(res => res.json())
+    .then(data => {
+      if(!data.success) alert('Erro ao salvar avatar: ' + data.error);
+    });
+  }
+</script>
+{% endblock %}

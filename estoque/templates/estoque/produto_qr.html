@@ -1,0 +1,467 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Produto - {{ produto.nome }}{% endblock %}
+
+{% block content %}
+<div class="product-container">
+  <div class="product-card">
+    <!-- Cabeçalho do produto -->
+    <div class="product-header">
+      <h2 class="product-title">{{ produto.nome }}</h2>
+      <div class="product-badge {% if produto.quantidade > 10 %}in-stock{% elif produto.quantidade > 0 %}low-stock{% else %}out-of-stock{% endif %}">
+        {% if produto.quantidade > 10 %}Disponível{% elif produto.quantidade > 0 %}Estoque Baixo{% else %}Indisponível{% endif %}
+      </div>
+    </div>
+
+    <!-- Informações do produto -->
+    <div class="product-info">
+      <div class="info-item">
+        <span class="info-label">📦 Setor:</span>
+        <span class="info-value">{{ produto.setor_responsavel.name }}</span>
+      </div>
+      
+      <div class="info-item">
+        <span class="info-label">🔢 Quantidade disponível:</span>
+        <span class="info-value" id="quantidade">{{ produto.quantidade }}</span>
+      </div>
+      
+      <div class="info-item">
+        <span class="info-label">📝 Observações:</span>
+        <span class="info-value">{{ produto.observacoes|default:"Nenhuma observação" }}</span>
+      </div>
+    </div>
+
+    <!-- Formulário de retirada -->
+    <div class="withdrawal-section">
+      <h3 class="section-title">Retirar Item</h3>
+      
+      <form id="formRetirar" method="POST" class="withdrawal-form">
+        {% csrf_token %}
+        
+        <div class="form-group">
+          <label for="quantidadeRetirar" class="form-label">
+            Quantidade para retirar:
+          </label>
+          <input 
+            type="number" 
+            id="quantidadeRetirar" 
+            name="quantidade" 
+            min="1" 
+            max="{{ produto.quantidade }}" 
+            class="form-input" 
+            required
+            placeholder="Digite a quantidade"
+          >
+          <small class="form-hint">
+            Máximo: {{ produto.quantidade }} unidades
+          </small>
+        </div>
+        
+        <button type="submit" class="submit-btn" {% if produto.quantidade == 0 %}disabled{% endif %}>
+          <span class="btn-icon">📥</span>
+          Confirmar Retirada
+        </button>
+      </form>
+    </div>
+
+    <!-- Mensagem de feedback -->
+    <div id="mensagem" class="message"></div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+document.getElementById("formRetirar").addEventListener("submit", function(e) {
+  e.preventDefault();
+  const formData = new FormData(this);
+  const submitBtn = this.querySelector('.submit-btn');
+  const msg = document.getElementById("mensagem");
+
+  // Mostrar loading
+  submitBtn.disabled = true;
+  submitBtn.innerHTML = '<span class="btn-icon">⏳</span> Processando...';
+
+  fetch("{% url 'retirar_item' produto.id %}", {
+    method: "POST",
+    headers: {'X-CSRFToken': '{{ csrf_token }}'},
+    body: formData
+  })
+  .then(r => r.json())
+  .then(data => {
+    if (data.success) {
+      msg.className = "message success";
+      msg.innerHTML = '✅ <strong>Sucesso!</strong> Retirada concluída com sucesso.';
+      document.getElementById("quantidade").textContent = data.nova_quantidade;
+      
+      // Atualizar badge de status
+      const badge = document.querySelector('.product-badge');
+      const quantidade = data.nova_quantidade;
+      
+      if (quantidade > 10) {
+        badge.className = 'product-badge in-stock';
+        badge.textContent = 'Disponível';
+      } else if (quantidade > 0) {
+        badge.className = 'product-badge low-stock';
+        badge.textContent = 'Estoque Baixo';
+      } else {
+        badge.className = 'product-badge out-of-stock';
+        badge.textContent = 'Indisponível';
+        submitBtn.disabled = true;
+      }
+      
+      // Limpar formulário
+      document.getElementById("quantidadeRetirar").value = '';
+      
+    } else {
+      msg.className = "message error";
+      msg.innerHTML = `❌ <strong>Erro:</strong> ${data.error}`;
+    }
+  })
+  .catch(() => {
+    msg.className = "message error";
+    msg.innerHTML = '❌ <strong>Erro:</strong> Falha na comunicação com o servidor.';
+  })
+  .finally(() => {
+    // Restaurar botão
+    submitBtn.disabled = false;
+    submitBtn.innerHTML = '<span class="btn-icon">📥</span> Confirmar Retirada';
+    
+    // Auto-esconder mensagem após 5 segundos
+    setTimeout(() => {
+      msg.className = "message";
+      msg.innerHTML = '';
+    }, 5000);
+  });
+});
+
+// Validação em tempo real
+document.getElementById("quantidadeRetirar").addEventListener("input", function() {
+  const max = parseInt(this.max);
+  const value = parseInt(this.value) || 0;
+  
+  if (value > max) {
+    this.setCustomValidity(`Quantidade não pode ser maior que ${max}`);
+  } else {
+    this.setCustomValidity('');
+  }
+});
+</script>
+
+<style>
+.product-container {
+  max-width: 600px;
+  margin: 2rem auto;
+  padding: 0 1rem;
+}
+
+.product-card {
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  padding: 2rem;
+  border: 1px solid #e1e5e9;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.product-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+}
+
+.product-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.product-title {
+  color: #2d3748;
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin: 0;
+  flex: 1;
+}
+
+.product-badge {
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.product-badge.in-stock {
+  background: #f0fff4;
+  color: #38a169;
+  border: 1px solid #c6f6d5;
+}
+
+.product-badge.low-stock {
+  background: #fffaf0;
+  color: #dd6b20;
+  border: 1px solid #fed7aa;
+}
+
+.product-badge.out-of-stock {
+  background: #fed7d7;
+  color: #e53e3e;
+  border: 1px solid #fc8181;
+}
+
+.product-info {
+  background: #f8fafc;
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.info-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.info-item:last-child {
+  border-bottom: none;
+}
+
+.info-label {
+  color: #4a5568;
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+.info-value {
+  color: #2d3748;
+  font-weight: 500;
+  text-align: right;
+}
+
+.withdrawal-section {
+  border-top: 2px solid #e2e8f0;
+  padding-top: 1.5rem;
+}
+
+.section-title {
+  color: #2d3748;
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 1.5rem;
+}
+
+.withdrawal-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.form-label {
+  color: #4a5568;
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+.form-input {
+  padding: 0.75rem 1rem;
+  border: 2px solid #e2e8f0;
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: all 0.2s ease;
+  background: white;
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: #4299e1;
+  box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.1);
+}
+
+.form-hint {
+  color: #718096;
+  font-size: 0.875rem;
+}
+
+.submit-btn {
+  background: linear-gradient(135deg, #48bb78, #38a169);
+  color: white;
+  padding: 1rem 1.5rem;
+  border: none;
+  border-radius: 10px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.submit-btn:hover:not(:disabled) {
+  background: linear-gradient(135deg, #38a169, #2f855a);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(72, 187, 120, 0.3);
+}
+
+.submit-btn:disabled {
+  background: #a0aec0;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.btn-icon {
+  font-size: 1.1rem;
+}
+
+.message {
+  margin-top: 1.5rem;
+  padding: 1rem;
+  border-radius: 8px;
+  text-align: center;
+  font-weight: 600;
+  opacity: 0;
+  transform: translateY(-10px);
+  transition: all 0.3s ease;
+}
+
+.message.success {
+  background: #f0fff4;
+  color: #2f855a;
+  border: 1px solid #9ae6b4;
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.message.error {
+  background: #fed7d7;
+  color: #c53030;
+  border: 1px solid #fc8181;
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Responsividade */
+@media (max-width: 640px) {
+  .product-container {
+    margin: 1rem auto;
+    padding: 0 0.5rem;
+  }
+  
+  .product-card {
+    padding: 1.5rem;
+  }
+  
+  .product-header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .info-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.25rem;
+  }
+  
+  .info-value {
+    text-align: left;
+  }
+}
+</style>
+<script>
+  // --- NOTIFICAÇÕES (resto igual) ---
+  function toggleNotificacoes() {
+    const container = document.getElementById('notificacoes-container');
+    container.style.display = container.style.display === 'block' ? 'none' : 'block';
+  }
+
+  function atualizarNotificacoes() {
+    fetch("{% url 'notificacoes' %}")
+      .then(res => res.json())
+      .then(data => {
+        const container = document.getElementById('notificacoes-container');
+        const dropdown = document.getElementById('notificacoes-dropdown');
+        container.innerHTML = '';
+
+        if (data.notificacoes.length === 0) {
+          container.innerHTML = '<p style="padding:10px;">Nenhuma notificação</p>';
+          dropdown.classList.remove('has-notifications');
+        } else {
+          dropdown.classList.add('has-notifications');
+          data.notificacoes.forEach(n => {
+            const div = document.createElement('div');
+            div.classList.add('notif-item');
+            div.style.padding = '10px';
+            div.style.borderBottom = '1px solid #eee';
+            div.style.display = 'flex';
+            div.style.justifyContent = 'space-between';
+            div.style.alignItems = 'center';
+            div.innerHTML = `
+              <span>${n.mensagem}</span>
+              <button style="background:#ea005f;color:white;border:none;padding:4px 8px;border-radius:3px;cursor:pointer;" onclick="marcarVista(${n.id})">✔</button>
+            `;
+            container.appendChild(div);
+          });
+        }
+      });
+  }
+
+  function marcarVista(id) {
+    fetch("{% url 'marcar_vista' %}", {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'X-CSRFToken': '{{ csrf_token }}'
+      },
+      body: 'id=' + id
+    })
+    .then(res => res.json())
+    .then(data => {
+      if(data.success) atualizarNotificacoes();
+      else alert(data.error);
+    });
+  }
+
+  setInterval(atualizarNotificacoes, 30000);
+  window.onload = atualizarNotificacoes;
+    // --- MODAL DE AVATAR ---
+  function openAvatarModal() {
+    document.getElementById('avatarModal').style.display = 'block';
+  }
+
+  function closeAvatarModal() {
+    document.getElementById('avatarModal').style.display = 'none';
+  }
+
+  function setAvatar(src) {
+    document.getElementById('user-avatar').src = src;
+    closeAvatarModal();
+
+    fetch("{% url 'atualizar_avatar' %}", {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'X-CSRFToken': '{{ csrf_token }}'
+      },
+      body: 'avatar=' + encodeURIComponent(src)
+    })
+    .then(res => res.json())
+    .then(data => {
+      if(!data.success) alert('Erro ao salvar avatar: ' + data.error);
+    });
+  }
+</script>
+{% endblock %}

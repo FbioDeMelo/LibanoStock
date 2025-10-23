@@ -1,6 +1,10 @@
 from django.db import models
 from django.contrib.auth.models import Group, User
 from django.utils import timezone
+from django.core.files import File
+from django.conf import settings
+from io import BytesIO
+import qrcode
 
 class Produto(models.Model):
     nome = models.CharField(max_length=100)  # Nome do produto
@@ -13,6 +17,7 @@ class Produto(models.Model):
     )
     data_entrada = models.DateTimeField(auto_now_add=True)
     observacoes = models.TextField(blank=True, null=True)
+    qrcode_imagem = models.ImageField(upload_to='qrcodes/', blank=True, null=True)
 
     class Meta:
         unique_together = ('nome', 'setor_responsavel')
@@ -20,6 +25,25 @@ class Produto(models.Model):
 
     def __str__(self):
         return f"{self.nome} ({self.quantidade})"
+
+    def save(self, *args, **kwargs):
+        """Salva o produto e gera o QR code, se ainda não existir."""
+        criando = self.pk is None  # verifica se é um novo produto
+        super().save(*args, **kwargs)
+
+        # Só gera QR se for novo ou se não existir ainda
+        if criando or not self.qrcode_imagem:
+            qr_data = f"http://182.16.0.251:8000/produto/{self.id}/"  #altere sempre que rodar em outro dia
+            qr = qrcode.make(qr_data)
+
+            buffer = BytesIO()
+            qr.save(buffer, format='PNG')
+            file_name = f'qrcode_produto_{self.id}.png'
+            self.qrcode_imagem.save(file_name, File(buffer), save=False)
+            buffer.close()
+            super().save(update_fields=['qrcode_imagem'])
+
+
 
 class Movimentacao(models.Model):
     TIPO_CHOICES = (
@@ -36,6 +60,7 @@ class Movimentacao(models.Model):
 
     def __str__(self):
         return f"{self.tipo} - {self.produto.nome} ({self.quantidade})"
+
 
 class Setor(models.Model):
     nome_setor = models.CharField(max_length=100, default='Sem Nome')
