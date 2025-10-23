@@ -1,0 +1,9 @@
+<ul>
+    {% for produto in produtos %}
+        <li data-quantidade="{{ produto.quantidade }}" data-nome="{{ produto.nome }}">
+            {{ produto.nome }} ({{ produto.quantidade }} em estoque)
+        </li>
+    {% empty %}
+        <li>Nenhum produto encontrado</li>
+    {% endfor %}
+</ul>

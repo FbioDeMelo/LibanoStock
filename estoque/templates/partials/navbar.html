@@ -1,0 +1,34 @@
+<div class="navbar">
+  <img src="https://faculdadelibano.edu.br/_next/image?url=%2Froot%2Flogo-website-colorida.webp&w=384&q=75"
+       alt="Faculdade Libano" class="navbar-logo">
+
+  <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
+
+  <div class="navbar-links">
+    <img id="user-avatar" 
+         src="{{ request.user.profile.avatar_url }}" 
+         alt="Avatar" 
+         class="user-avatar" 
+         onclick="openAvatarModal()" >
+         
+    <span id="user-info" onclick="openAvatarModal()" style="cursor:pointer;">
+      <strong>{{ request.user.username }}</strong>
+      {% if not is_admin %}
+        – <strong>{{ request.user.groups.first.name }}</strong>
+      {% else %}
+        – <strong>Admin</strong>
+      {% endif %}
+    </span>
+
+    <!-- Notificações -->
+    <div id="notificacoes-dropdown">
+      <i class="fas fa-bell notificacao-icone" onclick="toggleNotificacoes()"></i>
+      <div id="notificacoes-container" class="notificacoes-dropdown"></div>
+    </div>
+
+    <a href="{% url 'logout' %}">Sair</a>
+  </div>
+</div>
+
+<!-- Modal de avatar -->
+{% include 'partials/avatar_modal.html' %}

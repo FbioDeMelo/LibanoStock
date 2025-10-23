@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div style="text-align: center; padding: 50px;">
+    <h1 style="font-size: 80px; color: #d9534f;">404</h1>
+    <h2>Página não encontrada 😕</h2>
+    <p>O endereço que você tentou acessar não existe.</p>
+    <a href="{% url 'index' %}" class="btn btn-primary">Voltar para o início</a>
+</div>
+{% endblock %}

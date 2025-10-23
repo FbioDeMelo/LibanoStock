@@ -1,0 +1,28 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>{% block title %}CorpHub{% endblock %}</title>
+      <link rel="shortcut icon" type="image/x-icon" href="http://182.16.0.126/static/default/Libano%2B%20icone.ico">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="{% static 'css/main.css' %}">
+  {% block extra_head %}{% endblock %}
+</head>
+
+<body>
+  <!-- Navbar -->
+  {% include 'partials/navbar.html' %}
+
+  <!-- Sidebar -->
+  {% include 'partials/sidebar.html' %}
+
+  <!-- Conteúdo -->
+  <div class="content">
+    {% block content %}{% endblock %}
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  {% block extra_scripts %}{% endblock %}
+</body>
+</html>

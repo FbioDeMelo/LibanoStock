@@ -1,0 +1,85 @@
+<div class="sidebar" id="sidebar">
+
+  {% url 'index' as index_url %}
+  <a href="{{ index_url }}" class="{% if request.path == index_url %}active{% endif %}">
+    <i class="fas fa-home"></i> Início
+  </a>
+
+  {% if is_admin %}
+    {% url 'produtos_setor' 'todos' as produtos_todos_url %}
+    <a href="{{ produtos_todos_url }}" class="{% if request.path == produtos_todos_url %}active{% endif %}">
+      <i class="fas fa-boxes"></i> Estoque Total
+    </a>
+  {% else %}
+    {% for setor in hub_info %}
+      {% url 'produtos_setor' setor.nome_setor as setor_url %}
+      <a href="{{ setor_url }}" class="{% if request.path == setor_url %}active{% endif %}">
+        <i class="fas fa-box"></i> Estoque - <strong>{{ setor.nome_setor }}</strong>
+      </a>
+    {% endfor %}
+  {% endif %}
+
+  {% url 'adicionar_produto' as adicionar_produto_url %}
+  <a href="{{ adicionar_produto_url }}" class="{% if request.path == adicionar_produto_url %}active{% endif %}">
+    <i class="fas fa-plus-circle"></i> Adicionar Produto
+  </a>
+
+  {% if is_admin %}
+    {% url 'adicionar_usuario' as adicionar_usuario_url %}
+    {% url 'gerenciar_usuarios' as gerenciar_usuarios_url %}
+    <a href="{{ adicionar_usuario_url }}" class="{% if request.path == adicionar_usuario_url %}active{% endif %}">
+      <i class="fas fa-user-plus"></i> Adicionar Usuário
+    </a>
+    <a href="{{ gerenciar_usuarios_url }}" class="{% if request.path == gerenciar_usuarios_url %}active{% endif %}">
+      <i class="fas fa-users-cog"></i> Gerenciar Usuários
+    </a>
+  {% endif %}
+
+  {% if is_admin %}
+    {% url 'movimentacoes' as movimentacoes_url %}
+    {% url 'dashboard_graficos' as dashboard_url %}
+    <a href="{{ movimentacoes_url }}" class="{% if request.path == movimentacoes_url %}active{% endif %}">
+      <i class="fas fa-exchange-alt"></i> Ver Movimentações
+    </a>
+    <a href="{{ dashboard_url }}" class="{% if request.path == dashboard_url %}active{% endif %}">
+      <i class="fas fa-chart-line"></i> Dashboard
+    </a>
+  {% endif %}
+
+  {% if is_admin or pertence_geral %}
+    {% url 'colaborador_create' as colaborador_create_url %}
+    {% url 'lista_colaboradores' as lista_colaboradores_url %}
+    {% url 'protocolo_create' as protocolo_create_url %}
+    {% url 'lista_patrimonios' as lista_patrimonios_url %}
+    <a href="{{ colaborador_create_url }}" class="{% if request.path == colaborador_create_url %}active{% endif %}">
+      <i class="fas fa-user-plus"></i> Cadastrar Colaborador
+    </a>
+    <a href="{{ lista_colaboradores_url }}" class="{% if request.path == lista_colaboradores_url %}active{% endif %}">
+      <i class="fas fa-users"></i> Ver Colaboradores
+    </a>
+    <a href="{{ protocolo_create_url }}" class="{% if request.path == protocolo_create_url %}active{% endif %}">
+      <i class="fas fa-envelope"></i> Protocolo de Correspondência
+    </a>
+    <a href="{{ lista_patrimonios_url }}" class="{% if request.path == lista_patrimonios_url %}active{% endif %}">
+      <i class="fas fa-archive"></i> Inventário de Patrimônios
+    </a>
+  {% endif %}
+
+  {# 🔹 Todos os usuários podem solicitar compra #}
+  {% url 'solicitar_compra' as solicitar_compra_url %}
+  <a href="{{ solicitar_compra_url }}" class="{% if request.path == solicitar_compra_url %}active{% endif %}">
+    <i class="fas fa-shopping-cart"></i> Solicitar Compra
+  </a>
+
+  {# 🔹 Apenas admin e setor geral podem gerenciar solicitações #}
+  {% if is_admin or pertence_geral %}
+    {% url 'gerenciar_solicitacoes' as gerenciar_solicitacoes_url %}
+    <a href="{{ gerenciar_solicitacoes_url }}" class="{% if request.path == gerenciar_solicitacoes_url %}active{% endif %}">
+      <i class="fas fa-tasks"></i> Gerenciar Solicitações
+    </a>
+  {% endif %}
+
+  <a href="{% url 'logout' %}">
+    <i class="fas fa-sign-out-alt"></i> Sair
+  </a>
+</div>

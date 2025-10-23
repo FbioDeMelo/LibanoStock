@@ -1,0 +1,14 @@
+<div id="avatarModal" class="modal">
+  <div class="modal-content">
+    <span class="close" onclick="closeAvatarModal()">&times;</span>
+    <h4>Escolha seu avatar <strong>{{ request.user.username }}</strong></h4>
+    <div class="avatar-options">
+      <img src="https://cdn-icons-png.flaticon.com/512/149/149071.png" onclick="setAvatar(this.src)" alt="Neutro">
+      <img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" onclick="setAvatar(this.src)" alt="Masculino1">
+      <img src="https://cdn-icons-png.flaticon.com/512/219/219958.png" onclick="setAvatar(this.src)" alt="Masculino2">
+      <img src="https://cdn-icons-png.flaticon.com/512/6997/6997615.png" onclick="setAvatar(this.src)" alt="Feminino1">
+      <img src="https://cdn-icons-png.flaticon.com/512/6997/6997662.png" onclick="setAvatar(this.src)" alt="Feminino2">
+      <img src="https://cdn-icons-png.flaticon.com/512/219/219967.png" onclick="setAvatar(this.src)" alt="Feminino3">
+    </div>
+  </div>
+</div>

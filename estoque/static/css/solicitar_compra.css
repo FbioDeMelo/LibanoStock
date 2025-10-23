@@ -1,0 +1,297 @@
+/* static/css/solicitar_compra.css */
+
+.solicitar-container {
+  background: #fff;
+  padding: 25px;
+  border-radius: 12px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  max-width: 900px;
+  margin: 20px auto;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.solicitar-container h2 {
+  color: #333;
+  margin-bottom: 20px;
+  font-size: 1.8em;
+  border-bottom: 2px solid #ea005f;
+  padding-bottom: 10px;
+}
+
+.solicitar-container h3 {
+  color: #444;
+  margin: 25px 0 15px 0;
+  font-size: 1.4em;
+}
+
+/* ===== Formulário ===== */
+.solicitacao-form {
+  margin-bottom: 25px;
+  background: #f8f9fa;
+  padding: 20px;
+  border-radius: 8px;
+  border: 1px solid #e9ecef;
+}
+
+.solicitacao-form p {
+  margin-bottom: 15px;
+}
+
+.solicitacao-form label {
+  font-weight: 600;
+  color: #495057;
+  display: block;
+  margin-bottom: 6px;
+  font-size: 14px;
+}
+
+.solicitacao-form input[type="text"],
+.solicitacao-form input[type="number"],
+.solicitacao-form input[type="email"],
+.solicitacao-form select,
+.solicitacao-form textarea {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #ced4da;
+  border-radius: 6px;
+  font-size: 15px;
+  transition: all 0.2s ease-in-out;
+  box-sizing: border-box;
+  font-family: inherit;
+}
+
+.solicitacao-form input:focus,
+.solicitacao-form select:focus,
+.solicitacao-form textarea:focus {
+  border-color: #007bff;
+  box-shadow: 0 0 4px rgba(0,123,255,0.4);
+  outline: none;
+}
+
+.solicitacao-form .helptext {
+  font-size: 12px;
+  color: #6c757d;
+  margin-top: 4px;
+  display: block;
+}
+
+.solicitacao-form .errorlist {
+  color: #dc3545;
+  font-size: 13px;
+  margin: 5px 0;
+  padding-left: 15px;
+}
+
+/* Botão de envio */
+.btn-enviar {
+  background: #ea005f;
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 16px;
+  font-weight: 600;
+  margin-top: 10px;
+}
+
+.btn-enviar:hover {
+  background: #a10141;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(0,123,255,0.3);
+}
+
+/* ===== Linha divisória ===== */
+.solicitar-container hr {
+  border: none;
+  border-top: 2px solid #e9ecef;
+  margin: 30px 0;
+}
+
+/* ===== Tabela ===== */
+.tabela-solicitacoes {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.tabela-solicitacoes th {
+  background: #000000;
+  color: #fff;
+  text-align: left;
+  padding: 12px 15px;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.tabela-solicitacoes td {
+  border-bottom: 1px solid #dee2e6;
+  padding: 12px 15px;
+  font-size: 14px;
+}
+
+.tabela-solicitacoes tr:last-child td {
+  border-bottom: none;
+}
+
+.tabela-solicitacoes tr:hover {
+  background-color: #f8f9fa;
+}
+
+/* ===== Cores por status ===== */
+.status-pendente td {
+  background: #fff8e1;
+  border-left: 4px solid #ffc107;
+}
+
+.status-aprovada td {
+  background: #e1f5fe;
+  border-left: 4px solid #17a2b8;
+}
+
+.status-negada td {
+  background: #ffebee;
+  border-left: 4px solid #dc3545;
+}
+
+.status-concluída td,
+.status-concluida td {
+  background: #e8f5e9;
+  border-left: 4px solid #28a745;
+}
+
+.status-entregue td {
+  background: #e8f5e9;
+  border-left: 4px solid #28a745;
+}
+
+/* Mensagem quando não há solicitações */
+.tabela-solicitacoes tr td[colspan="4"] {
+  text-align: center;
+  color: #6c757d;
+  font-style: italic;
+  padding: 30px;
+  background: #f8f9fa;
+}
+
+/* ===== Paginação ===== */
+.paginacao {
+  margin-top: 25px;
+  text-align: center;
+  padding: 15px;
+  background: #f8f9fa;
+  border-radius: 8px;
+}
+
+.paginacao .pagina {
+  margin: 0 8px;
+  text-decoration: none;
+  color: #ea005f;
+  padding: 8px 16px;
+  border: 1px solid #dee2e6;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+  font-weight: 500;
+}
+
+.paginacao .pagina:hover {
+  background: #ea005f;
+  color: white;
+  text-decoration: none;
+  border-color: #007bff;
+}
+
+.paginacao span {
+  color: #495057;
+  font-weight: 500;
+  margin: 0 15px;
+}
+
+/* ===== Responsividade ===== */
+@media (max-width: 768px) {
+  .solicitar-container {
+    padding: 15px;
+    margin: 10px;
+  }
+  
+  .tabela-solicitacoes {
+    font-size: 12px;
+  }
+  
+  .tabela-solicitacoes th,
+  .tabela-solicitacoes td {
+    padding: 8px 10px;
+  }
+  
+  .paginacao {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .paginacao span {
+    margin: 5px 0;
+  }
+}
+
+/* ===== Estados de foco e acessibilidade ===== */
+.btn-enviar:focus,
+.pagina:focus {
+  outline: 2px solid #0056b3;
+  outline-offset: 2px;
+}
+
+/* Animações suaves */
+.solicitar-container {
+  animation: fadeIn 0.5s ease-in;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+/* 🌀 Loading overlay */
+#loading-overlay {
+  display: none; /* oculto por padrão */
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(255,255,255,0.8);
+  z-index: 9999;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+#loading-overlay p {
+  margin-top: 15px;
+  color: #333;
+  font-weight: 500;
+}
+
+/* Spinner */
+.spinner {
+  border: 5px solid #eee;
+  border-top: 5px solid #007bff;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}

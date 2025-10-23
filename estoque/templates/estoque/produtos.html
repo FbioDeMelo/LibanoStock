@@ -1,0 +1,151 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Produtos - {{ setor }}{% endblock %}
+
+{% block content %}
+<h1 class="welcome">Estoque do Setor - {{ setor }}</h1>
+
+<div style="margin-bottom:20px; display:flex; gap:15px; align-items:center;">
+  <input type="text" id="searchInput" placeholder="Pesquisar produto..." class="form-control" style="flex:1;">
+  <select id="setorFilter" class="form-control" style="max-width:200px;">
+      <option value="">Todos os Setores</option>
+      {% for s in setores %}
+          <option value="{{ s.name }}">{{ s.name }}</option>
+      {% endfor %}
+  </select>
+</div>
+
+<div class="table-container">
+    <table class="products-table">
+        <thead>
+            <tr>
+                <th>Nome</th>
+                <th>Quantidade</th>
+                <th>Setor</th>
+                <th>Observações</th>
+                <th>Ações</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for produto in produtos %}
+            <tr>
+                <td>{{ produto.nome }}</td>
+                <td id="quantidade-{{ produto.id }}">{{ produto.quantidade }}</td>
+                <td>{{ produto.setor_responsavel.name }}</td>
+                <td>{{ produto.observacoes }}</td>
+                <td>
+                    <button class="action-btn" onclick="abrirModal({{ produto.id }}, '{{ produto.nome }}')">Retirar</button>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="5" style="text-align:center; padding:40px; color:#666;">
+                    Nenhum produto encontrado neste setor
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <div style="margin-top:20px; display:flex; gap:8px; justify-content:center;">
+        {% if produtos.has_previous %}
+            <a href="?page={{ produtos.previous_page_number }}" class="action-btn">Anterior</a>
+        {% endif %}
+
+        <span style="padding:8px 12px; background:#f0f0f0; border-radius:5px;">
+            Página {{ produtos.number }} de {{ produtos.paginator.num_pages }}
+        </span>
+
+        {% if produtos.has_next %}
+            <a href="?page={{ produtos.next_page_number }}" class="action-btn">Próxima</a>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Modal de retirada -->
+<div id="modalRetirar" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3 id="tituloModal">Retirar item</h3>
+            <span class="close" onclick="fecharModal()">&times;</span>
+        </div>
+        <div class="modal-body">
+            <form id="formRetirar">
+                <input type="number" name="quantidade" min="1" placeholder="Quantidade" class="form-control">
+                <button type="submit" class="submit-btn">Confirmar</button>
+            </form>
+            <p id="erro" class="error-message"></p>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+  // Variáveis Django acessíveis no main.js
+  window.DJANGO = {
+    csrfToken: "{{ csrf_token }}",
+    notificacoesUrl: "{% url 'notificacoes' %}",
+    marcarVistaUrl: "{% url 'marcar_vista' %}",
+    atualizarAvatarUrl: "{% url 'atualizar_avatar' %}"
+  };
+
+  // Filtragem da tabela
+  const searchInput = document.getElementById('searchInput');
+  const setorFilter = document.getElementById('setorFilter');
+  const tableRows = document.querySelectorAll('.products-table tbody tr');
+
+  function filtrarTabela() {
+      const searchTerm = searchInput.value.toLowerCase();
+      const setorSelecionado = setorFilter.value;
+
+      tableRows.forEach(row => {
+          const nome = row.cells[0]?.innerText.toLowerCase();
+          const setor = row.cells[2]?.innerText;
+
+          const matchNome = nome.includes(searchTerm);
+          const matchSetor = setorSelecionado === "" || setor === setorSelecionado;
+
+          row.style.display = (matchNome && matchSetor) ? "" : "none";
+      });
+  }
+
+  searchInput.addEventListener('keyup', filtrarTabela);
+  setorFilter.addEventListener('change', filtrarTabela);
+
+  // Modal de retirada
+  let produtoIdAtual = null;
+  function abrirModal(id, nome) {
+      produtoIdAtual = id;
+      document.getElementById('tituloModal').innerText = 'Retirar: ' + nome;
+      document.getElementById('erro').innerText = '';
+      document.getElementById('modalRetirar').style.display = 'block';
+  }
+  function fecharModal() {
+      document.getElementById('modalRetirar').style.display = 'none';
+  }
+
+  document.getElementById('formRetirar').addEventListener('submit', function(e){
+      e.preventDefault();
+      const formData = new FormData(this);
+      fetch(`/retirar_item/${produtoIdAtual}/`, {
+          method:'POST', headers:{'X-CSRFToken': window.DJANGO.csrfToken}, body:formData
+      }).then(r=>r.json()).then(data=>{
+          if(data.success){
+              document.getElementById('quantidade-'+produtoIdAtual).innerText = data.nova_quantidade;
+              fecharModal();
+          } else {
+              document.getElementById('erro').innerText = data.error;
+          }
+      }).catch(()=>{ document.getElementById('erro').innerText = 'Erro ao retirar.'; });
+  });
+
+  window.onclick = function(event) {
+      if(event.target === document.getElementById('modalRetirar')) fecharModal();
+  };
+</script>
+
+<!-- Carrega o JS principal que cuida de navbar, sidebar, notificações e avatar -->
+<script src="{% static 'js/main.js' %}"></script>
+{% endblock %}

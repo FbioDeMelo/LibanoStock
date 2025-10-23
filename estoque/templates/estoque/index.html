@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Estoque - CorpHub{% endblock %}
+
+{% block content %}
+<h1 class="welcome">Olá, {{ request.user.username }}! Seja bem-vindo!</h1>
+
+{% if is_admin %}
+  <div class="card quick-access">
+    <h2>Acesso rápido ao estoque</h2>
+    <p>Total de Produtos: {{ total_produtos }}</p>
+    <a href="{% url 'produtos_setor' 'todos' %}">Ver Todos os Produtos</a>
+  </div>
+
+  <div class="card small-chart">
+    <h2>Resumo Gráfico do Estoque</h2>
+    <canvas id="estoqueChart"></canvas>
+  </div>
+
+{% else %}
+  {% for setor in hub_info %}
+    <div class="card">
+      <h2>{{ setor.nome_setor }}</h2>
+      <p>Total de Produtos: {{ setor.total_produtos }}</p>
+      <a href="{% url 'produtos_setor' setor.nome_setor %}">Ver Produtos</a>
+    </div>
+  {% endfor %}
+{% endif %}
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+  // Injetar variáveis Django acessíveis no main.js
+  window.DJANGO = {
+    csrfToken: "{{ csrf_token }}",
+    notificacoesUrl: "{% url 'notificacoes' %}",
+    marcarVistaUrl: "{% url 'marcar_vista' %}",
+    atualizarAvatarUrl: "{% url 'atualizar_avatar' %}"
+  };
+</script>
+
+<script>
+  const ctx = document.getElementById('estoqueChart');
+  if (ctx) {
+    const labels = JSON.parse('{{ chart_labels|escapejs }}');
+    const data = JSON.parse('{{ chart_data|escapejs }}');
+    new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: labels,
+        datasets: [{
+          label: 'Total de Produtos',
+          data: data,
+          backgroundColor: 'rgba(54, 162, 235, 0.5)',
+          borderColor: 'rgba(54, 162, 235, 1)',
+          borderWidth: 1
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: { legend: { display: true, position: 'top' } },
+        scales: { y: { beginAtZero: true } }
+      }
+    });
+  }
+</script>
+
+<!-- Carrega o JS principal no final -->
+<script src="{% static 'js/main.js' %}"></script>
+{% endblock %}

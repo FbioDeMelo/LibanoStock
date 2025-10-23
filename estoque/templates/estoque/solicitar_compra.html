@@ -1,0 +1,158 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Solicitar Compra{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="{% static 'css/solicitar_compra.css' %}">
+
+<div class="solicitar-container">
+  <h2>🛒 Solicitar Compra</h2>
+
+  <!-- ✅ Adicionei o id que faltava -->
+  <form method="post" class="solicitacao-form" id="form-solicitacao">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn-enviar">Enviar Solicitação</button>
+  </form>
+
+  <hr>
+
+  <h3>📦 Minhas Solicitações</h3>
+  <table class="tabela-solicitacoes">
+    <tr>
+      <th>Produto</th>
+      <th>Quantidade</th>
+      <th>Status</th>
+      <th>Última atualização</th>
+    </tr>
+    {% for s in solicitacoes %}
+    <tr class="status-{{ s.status|lower }}">
+      <td>{{ s.nome_produto }}</td>
+      <td>{{ s.quantidade }}</td>
+      <td>{{ s.status }}</td>
+      <td>{{ s.data_atualizacao|date:"d/m/Y H:i" }}</td>
+    </tr>
+    {% empty %}
+    <tr><td colspan="4">Nenhuma solicitação encontrada.</td></tr>
+    {% endfor %}
+  </table>
+
+  {% if solicitacoes.has_other_pages %}
+  <div class="paginacao">
+    {% if solicitacoes.has_previous %}
+      <a href="?page={{ solicitacoes.previous_page_number }}" class="pagina">&laquo; Anterior</a>
+    {% endif %}
+    <span>Página {{ solicitacoes.number }} de {{ solicitacoes.paginator.num_pages }}</span>
+    {% if solicitacoes.has_next %}
+      <a href="?page={{ solicitacoes.next_page_number }}" class="pagina">Próxima &raquo;</a>
+    {% endif %}
+  </div>
+  {% endif %}
+</div>
+
+<!-- 🌀 LOADING OVERLAY -->
+<div id="loading-overlay">
+  <div class="spinner"></div>
+  <p>Enviando solicitação, aguarde...</p>
+</div>
+
+<script>
+  // --- LOADING ---
+  const form = document.getElementById("form-solicitacao");
+  const overlay = document.getElementById("loading-overlay");
+
+  if (form) {
+    form.addEventListener("submit", function() {
+      overlay.style.display = "flex"; // mostra o loading
+      document.body.style.overflow = "hidden"; // 🚫 bloqueia rolagem
+    });
+  }
+
+  // Quando a página recarregar (ou se der erro e o overlay continuar)
+  window.addEventListener("pageshow", function() {
+    document.body.style.overflow = "auto"; // ✅ restaura rolagem
+  });
+
+  // --- NOTIFICAÇÕES (resto igual) ---
+  function toggleNotificacoes() {
+    const container = document.getElementById('notificacoes-container');
+    container.style.display = container.style.display === 'block' ? 'none' : 'block';
+  }
+
+  function atualizarNotificacoes() {
+    fetch("{% url 'notificacoes' %}")
+      .then(res => res.json())
+      .then(data => {
+        const container = document.getElementById('notificacoes-container');
+        const dropdown = document.getElementById('notificacoes-dropdown');
+        container.innerHTML = '';
+
+        if (data.notificacoes.length === 0) {
+          container.innerHTML = '<p style="padding:10px;">Nenhuma notificação</p>';
+          dropdown.classList.remove('has-notifications');
+        } else {
+          dropdown.classList.add('has-notifications');
+          data.notificacoes.forEach(n => {
+            const div = document.createElement('div');
+            div.classList.add('notif-item');
+            div.style.padding = '10px';
+            div.style.borderBottom = '1px solid #eee';
+            div.style.display = 'flex';
+            div.style.justifyContent = 'space-between';
+            div.style.alignItems = 'center';
+            div.innerHTML = `
+              <span>${n.mensagem}</span>
+              <button style="background:#ea005f;color:white;border:none;padding:4px 8px;border-radius:3px;cursor:pointer;" onclick="marcarVista(${n.id})">✔</button>
+            `;
+            container.appendChild(div);
+          });
+        }
+      });
+  }
+
+  function marcarVista(id) {
+    fetch("{% url 'marcar_vista' %}", {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'X-CSRFToken': '{{ csrf_token }}'
+      },
+      body: 'id=' + id
+    })
+    .then(res => res.json())
+    .then(data => {
+      if(data.success) atualizarNotificacoes();
+      else alert(data.error);
+    });
+  }
+
+  setInterval(atualizarNotificacoes, 30000);
+  window.onload = atualizarNotificacoes;
+    // --- MODAL DE AVATAR ---
+  function openAvatarModal() {
+    document.getElementById('avatarModal').style.display = 'block';
+  }
+
+  function closeAvatarModal() {
+    document.getElementById('avatarModal').style.display = 'none';
+  }
+
+  function setAvatar(src) {
+    document.getElementById('user-avatar').src = src;
+    closeAvatarModal();
+
+    fetch("{% url 'atualizar_avatar' %}", {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'X-CSRFToken': '{{ csrf_token }}'
+      },
+      body: 'avatar=' + encodeURIComponent(src)
+    })
+    .then(res => res.json())
+    .then(data => {
+      if(!data.success) alert('Erro ao salvar avatar: ' + data.error);
+    });
+  }
+</script>
+{% endblock %}

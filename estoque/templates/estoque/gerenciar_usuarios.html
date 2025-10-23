@@ -1,0 +1,1111 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+          <link rel="shortcut icon" type="image/x-icon" href="http://182.16.0.126/static/default/Libano%2B%20icone.ico">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <title>Gerenciar Usuários</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            line-height: 1.6;
+            background-color: #f8f9fa;
+            color: #333;
+        }
+
+        /* NAVBAR IDÊNTICA AO PRIMEIRO CÓDIGO */
+    .navbar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      background: linear-gradient(135deg, #ffffff 0%, #ffffff 100%);
+      color: rgb(0, 0, 0);
+      padding: 12px 20px;
+      box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 1000;
+      transition: all 0.3s ease;
+    }
+
+    .navbar h1 {
+      margin: 0;
+      font-size: 1.4rem;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+    }
+
+    .navbar-links {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .navbar-links span {
+      font-size: 0.95rem;
+      opacity: 0.9;
+    }
+
+    .navbar-links a {
+      color: rgb(0, 0, 0);
+      text-decoration: none;
+      padding: 8px 16px;
+      border-radius: 4px;
+      transition: all 0.3s ease;
+      background: rgba(255, 0, 0, 0.1);
+    }
+
+    .navbar-links a:hover {
+      background: rgba(251, 0, 0, 0.2);
+      transform: translateY(-1px);
+    }
+
+    /* Sidebar moderno com animações suaves */
+    .sidebar {
+      position: fixed;
+      top: 60px;
+      left: 0;
+      width: 260px;
+      height: calc(100vh - 60px);
+      background: #ffffff;
+      padding: 25px 0;
+      box-shadow: 2px 0 15px rgba(0,0,0,0.05);
+      overflow-y: auto;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      z-index: 999;
+    }
+    .navbar-logo {
+    height: 42px;
+    width: auto;
+}
+    .sidebar a {
+      display: flex;
+      align-items: center;
+      color: #555;
+      padding: 12px 25px;
+      text-decoration: none;
+      transition: all 0.3s ease;
+      border-left: 3px solid transparent;
+      margin: 5px 0;
+    }
+
+    .sidebar a:hover {
+      background: #f8f9fa;
+      color: #2c3e50;
+      border-left-color: #ea005f;
+      transform: translateX(5px);
+    }
+
+    .sidebar a strong {
+      font-weight: 600;
+    }
+.sidebar::-webkit-scrollbar {
+  display: none; /* Chrome, Safari */
+}
+
+        /* CONTEÚDO PRINCIPAL */
+        .content {
+            margin-top: 60px;
+            margin-left: 260px;
+            padding: 30px;
+            min-height: calc(100vh - 60px);
+        }
+
+        .page-header {
+            background: white;
+            padding: 25px 30px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            margin-bottom: 30px;
+            border-left: 4px solid #3498db;
+        }
+
+        .page-header h1 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+            font-size: 1.8rem;
+        }
+
+        .page-header p {
+            color: #666;
+            font-size: 1rem;
+        }
+
+        /* Tabela de usuários */
+        .table-container {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            overflow: hidden;
+            margin-bottom: 30px;
+        }
+
+        .users-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.95rem;
+        }
+
+        .users-table th {
+            background-color:  #000000;
+            padding: 15px 12px;
+            text-align: left;
+            font-weight: 600;
+            color: #ffffff;
+            border-bottom: 2px solid #e2e8f0;
+        }
+
+        .users-table td {
+            padding: 15px 12px;
+            border-bottom: 1px solid #e2e8f0;
+            transition: background-color 0.2s ease;
+        }
+
+        .users-table tr:hover td {
+            background-color: #f8fafc;
+        }
+
+        .users-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        /* Badge para grupos */
+        .group-badge {
+            display: inline-block;
+            background: #ea005f;
+            color: #ffffff;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            margin: 2px;
+        }
+
+        /* Botões com o mesmo estilo */
+        .action-btn {
+            background: #ea005f;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+
+        .action-btn:hover {
+            background: #a20443;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(52, 152, 219, 0.3);
+        }
+
+        /* Modal moderno */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal-content {
+            background-color: #fff;
+            margin: 5% auto;
+            padding: 0;
+            width: 90%;
+            max-width: 500px;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            animation: slideIn 0.3s ease;
+            overflow: hidden;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateY(-50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .modal-header {
+            background: linear-gradient(135deg, #000000 0%, #000000 100%);
+            color: white;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h2 {
+            margin: 0;
+            font-weight: 500;
+            font-size: 1.4rem;
+        }
+
+        .close {
+            color: white;
+            font-size: 24px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+
+        .close:hover {
+            transform: scale(1.2);
+        }
+
+        .modal-body {
+            padding: 25px;
+        }
+
+        /* Estilização do formulário no modal */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #2c3e50;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-control:focus {
+            border-color: #3498db;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+        }
+
+        .submit-btn {
+            background: #ea005f;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            width: 100%;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .submit-btn:hover {
+            background: #8c063b;
+            transform: translateY(-2px);
+        }
+
+        .password-note {
+            font-size: 0.85rem;
+            color: #666;
+            margin-top: 5px;
+        }
+
+        /* Mensagem de lista vazia */
+        .empty-message {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+            font-style: italic;
+        }
+
+        /* RESPONSIVIDADE - Mesma lógica do primeiro código */
+        @media (max-width: 768px) {
+            .navbar {
+                padding: 10px 15px;
+            }
+            
+            .navbar h1 {
+                font-size: 1.2rem;
+            }
+            
+            .navbar-links span {
+                display: none;
+            }
+
+            .sidebar {
+                width: 280px;
+                transform: translateX(-100%);
+            }
+            
+            .sidebar.mobile-open {
+                transform: translateX(0);
+            }
+
+            .content {
+                margin-left: 0;
+                padding: 20px 15px;
+            }
+
+            .users-table {
+                font-size: 0.85rem;
+            }
+
+            .users-table th,
+            .users-table td {
+                padding: 10px 8px;
+            }
+
+            .modal-content {
+                width: 95%;
+                margin: 10% auto;
+            }
+
+            .menu-toggle {
+                display: block;
+                background: none;
+                border: none;
+                color: #000000;
+                font-size: 1.5rem;
+                cursor: pointer;
+                padding: 5px;
+            }
+        }
+
+        @media (min-width: 769px) {
+            .menu-toggle {
+                display: none;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .users-table {
+                display: block;
+                overflow-x: auto;
+                white-space: nowrap;
+            }
+            
+            .action-btn span {
+                display: none;
+            }
+            
+            .action-btn::before {
+                content: "✏️";
+            }
+        }
+                .sidebar a i {
+  margin-right: 8px; /* ajusta o espaço entre ícone e texto */
+}
+        .sidebar a.active { border-left-color:#ea005f; font-weight:600; color:#2c3e50; }
+.modal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: transparent;
+  z-index: 1000;
+}
+
+.modal.show {
+  animation: modalBackdropIn 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.modal-content {
+  position: relative;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  margin: 10% auto;
+  padding: 40px 30px;
+  width: 90%;
+  max-width: 500px;
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  box-shadow: 
+    0 25px 50px rgba(0, 0, 0, 0.15),
+    0 0 0 1px rgba(255, 255, 255, 0.3);
+  opacity: 0;
+  transform: scale(0.8) translateY(-30px);
+  animation: modalContentIn 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) 0.1s forwards;
+}
+
+.close {
+  position: absolute;
+  top: 20px;
+  right: 25px;
+  color: #666;
+  font-size: 26px;
+  font-weight: 300;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(10px);
+}
+
+.close:hover {
+  color: #ff4757;
+  background: rgba(255, 71, 87, 0.1);
+  transform: rotate(90deg) scale(1.1);
+}
+
+.modal-content h3 {
+  margin-bottom: 35px;
+  color: #1a1a1a;
+  font-size: 1.5rem;
+  text-align: center;
+  font-weight: 600;
+  letter-spacing: -0.5px;
+}
+
+.avatar-options {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 25px;
+  justify-items: center;
+  padding: 15px 0;
+}
+
+.avatar-options img {
+  width: 85px;
+  height: 85px;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+  border: 2px solid transparent;
+  background: rgba(255, 255, 255, 0.9);
+  box-shadow: 
+    0 8px 25px rgba(0, 0, 0, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.8);
+  opacity: 0;
+  transform: scale(0.5) rotate(-15deg);
+  animation: avatarStaggerIn 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+.avatar-options img:nth-child(1) { animation-delay: 0.2s; }
+.avatar-options img:nth-child(2) { animation-delay: 0.25s; }
+.avatar-options img:nth-child(3) { animation-delay: 0.3s; }
+.avatar-options img:nth-child(4) { animation-delay: 0.35s; }
+.avatar-options img:nth-child(5) { animation-delay: 0.4s; }
+.avatar-options img:nth-child(6) { animation-delay: 0.45s; }
+
+.avatar-options img:hover {
+  transform: scale(1.15) translateY(-8px);
+  border-color: #4a6ee0;
+  box-shadow: 
+    0 15px 35px rgba(74, 110, 224, 0.25),
+    0 0 0 4px rgba(74, 110, 224, 0.1);
+}
+
+.avatar-options img:active {
+  transform: scale(1.05) translateY(-2px);
+  transition: all 0.2s ease;
+}
+
+/* Animações refinadas */
+@keyframes modalBackdropIn {
+  0% {
+    background-color: transparent;
+  }
+  100% {
+    background-color: rgba(0, 0, 0, 0.4);
+  }
+}
+
+@keyframes modalContentIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.8) translateY(-30px);
+  }
+  70% {
+    transform: scale(1.02) translateY(5px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes avatarStaggerIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.5) rotate(-15deg);
+  }
+  70% {
+    transform: scale(1.05) rotate(5deg);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) rotate(0deg);
+  }
+}
+
+/* Efeito de brilho sutil no hover */
+.avatar-options img::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  border-radius: 50%;
+  background: linear-gradient(45deg, transparent, rgba(74, 110, 224, 0.1), transparent);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  z-index: -1;
+}
+
+.avatar-options img:hover::before {
+  opacity: 1;
+  animation: gentleShine 2s ease-in-out infinite;
+}
+
+@keyframes gentleShine {
+  0%, 100% {
+    background-position: -200% 0;
+  }
+  50% {
+    background-position: 200% 0;
+  }
+}
+
+/* Responsividade */
+@media (max-width: 600px) {
+  .modal-content {
+    margin: 15% auto;
+    padding: 30px 20px;
+    width: 95%;
+  }
+  
+  .avatar-options {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+  }
+  
+  .avatar-options img {
+    width: 75px;
+    height: 75px;
+  }
+  
+  .modal-content h3 {
+    font-size: 1.3rem;
+  }
+}
+
+@media (max-width: 400px) {
+  .avatar-options {
+    gap: 15px;
+  }
+  
+  .avatar-options img {
+    width: 65px;
+    height: 65px;
+  }
+  
+  .modal-content {
+    padding: 25px 15px;
+  }
+}
+#notificacoes-dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+/* Ícone do sino */
+#notificacoes-dropdown .fa-bell {
+  font-size: 1.2rem;
+  cursor: pointer;
+  color: #666;
+  transition: all 0.3s ease;
+  padding: 8px;
+  border-radius: 50%;
+}
+
+#notificacoes-dropdown .fa-bell:hover {
+  color: #333;
+  background-color: #f5f5f5;
+  transform: scale(1.1);
+}
+
+#notificacoes-container {
+  display: none;
+  position: absolute;
+  right: 0;
+  top: 100%;
+  background: white;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  width: 320px;
+  max-height: 400px;
+  overflow-y: auto;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+  z-index: 10000;
+  animation: fadeIn 0.2s ease-in-out;
+}
+
+/* Indicador de notificações não lidas */
+#notificacoes-dropdown.has-notifications .fa-bell {
+  color: #007bff;
+  position: relative;
+}
+
+#notificacoes-dropdown.has-notifications .fa-bell::after {
+  content: '';
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  width: 8px;
+  height: 8px;
+  background-color: #ff4757;
+  border-radius: 50%;
+  border: 2px solid white;
+}
+
+/* Estados do dropdown */
+#notificacoes-container.show {
+  display: block;
+}
+
+#notificacoes-container.hidden {
+  display: none;
+}
+
+/* Scrollbar personalizada */
+#notificacoes-container::-webkit-scrollbar {
+  width: 6px;
+}
+
+#notificacoes-container::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 0 8px 8px 0;
+}
+
+#notificacoes-container::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 3px;
+}
+
+#notificacoes-container::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}
+#notificacoes-dropdown.has-notifications .fa-bell::after {
+  content: '';
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  width: 8px;
+  height: 8px;
+  background-color: #ff4757;
+  border-radius: 50%;
+  border: 2px solid white;
+}
+/* Animações */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Responsividade */
+@media (max-width: 480px) {
+  #notificacoes-container {
+    width: 280px;
+    right: -50px;
+  }
+}
+.user-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-right: 8px;
+  border: 2px solid #ea005f;
+    cursor: pointer;
+
+}
+    </style>
+</head>
+<body>
+<div class="navbar">
+  <img src="https://faculdadelibano.edu.br/_next/image?url=%2Froot%2Flogo-website-colorida.webp&w=384&q=75" 
+       alt="Faculdade Libano" class="navbar-logo">
+  <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
+
+  <div class="navbar-links">
+    <img id="user-avatar" 
+         src="{{ request.user.profile.avatar_url }}" 
+         alt="Avatar" 
+         class="user-avatar" 
+         onclick="openAvatarModal()" >
+         
+    <span id="user-info" onclick="openAvatarModal()" style="cursor:pointer;">
+      <strong>{{ request.user.username }}</strong>
+      {% if not is_admin %}
+        – <strong>{{ request.user.groups.first.name }}</strong>
+      {% else %}
+        – <strong>Admin</strong>
+      {% endif %}
+    </span>
+
+    <!-- Ícone de notificações -->
+    <div id="notificacoes-dropdown">
+      <i class="fas fa-bell notificacao-icone" onclick="toggleNotificacoes()"></i>
+      <div id="notificacoes-container" class="notificacoes-dropdown">
+        <!-- notificações serão inseridas aqui via JS -->
+      </div>
+    </div>
+
+    <!-- Logout -->
+    <a href="{% url 'logout' %}">Sair</a>
+  </div>
+</div>
+
+<!-- Modal para escolher avatar -->
+<div id="avatarModal" class="modal">
+  <div class="modal-content">
+    <span class="close" onclick="closeAvatarModal()">&times;</span>
+    <h3>Escolha seu avatar {{ request.user.username }}</h3>
+<div class="avatar-options">
+      <img src="https://cdn-icons-png.flaticon.com/512/149/149071.png" onclick="setAvatar(this.src)" alt="Neutro">
+      <img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" onclick="setAvatar(this.src)" alt="Masculino1">
+      <img src="https://cdn-icons-png.flaticon.com/512/219/219958.png" onclick="setAvatar(this.src)" alt="Masculino2">
+      <img src="https://cdn-icons-png.flaticon.com/512/6997/6997615.png" onclick="setAvatar(this.src)" alt="Feminino1">
+      <img src="https://cdn-icons-png.flaticon.com/512/6997/6997662.png" onclick="setAvatar(this.src)" alt="Feminino2">
+      <img src="https://cdn-icons-png.flaticon.com/512/219/219967.png" onclick="setAvatar(this.src)" alt="Feminino3">
+    </div>
+  </div>
+</div>
+ <div class="sidebar" id="sidebar">
+
+  {% url 'index' as index_url %}
+  <a href="{{ index_url }}" class="{% if request.path == index_url %}active{% endif %}">
+    <i class="fas fa-home"></i> Início
+  </a>
+
+  {% if is_admin %}
+    {% url 'produtos_setor' 'todos' as produtos_todos_url %}
+    <a href="{{ produtos_todos_url }}" class="{% if request.path == produtos_todos_url %}active{% endif %}">
+      <i class="fas fa-boxes"></i> Estoque Total
+    </a>
+  {% else %}
+    {% for setor in hub_info %}
+      {% url 'produtos_setor' setor.nome_setor as setor_url %}
+      <a href="{{ setor_url }}" class="{% if request.path == setor_url %}active{% endif %}">
+        <i class="fas fa-box"></i> Estoque - <strong>{{ setor.nome_setor }}</strong>
+      </a>
+    {% endfor %}
+  {% endif %}
+
+  {% url 'adicionar_produto' as adicionar_produto_url %}
+  <a href="{{ adicionar_produto_url }}" class="{% if request.path == adicionar_produto_url %}active{% endif %}">
+    <i class="fas fa-plus-circle"></i> Adicionar Produto
+  </a>
+
+  {% if is_admin %}
+    {% url 'adicionar_usuario' as adicionar_usuario_url %}
+    {% url 'gerenciar_usuarios' as gerenciar_usuarios_url %}
+    <a href="{{ adicionar_usuario_url }}" class="{% if request.path == adicionar_usuario_url %}active{% endif %}">
+      <i class="fas fa-user-plus"></i> Adicionar Usuário
+    </a>
+    <a href="{{ gerenciar_usuarios_url }}" class="{% if request.path == gerenciar_usuarios_url %}active{% endif %}">
+      <i class="fas fa-users-cog"></i> Gerenciar Usuários
+    </a>
+  {% endif %}
+
+  {% if is_admin %}
+    {% url 'movimentacoes' as movimentacoes_url %}
+    {% url 'dashboard_graficos' as dashboard_url %}
+    <a href="{{ movimentacoes_url }}" class="{% if request.path == movimentacoes_url %}active{% endif %}">
+      <i class="fas fa-exchange-alt"></i> Ver Movimentações
+    </a>
+    <a href="{{ dashboard_url }}" class="{% if request.path == dashboard_url %}active{% endif %}">
+      <i class="fas fa-chart-line"></i> Dashboard
+    </a>
+  {% endif %}
+
+  {% if is_admin or pertence_geral %}
+    {% url 'colaborador_create' as colaborador_create_url %}
+    {% url 'lista_colaboradores' as lista_colaboradores_url %}
+    {% url 'protocolo_create' as protocolo_create_url %}
+    {% url 'lista_patrimonios' as lista_patrimonios_url %}
+    <a href="{{ colaborador_create_url }}" class="{% if request.path == colaborador_create_url %}active{% endif %}">
+      <i class="fas fa-user-plus"></i> Cadastrar Colaborador
+    </a>
+    <a href="{{ lista_colaboradores_url }}" class="{% if request.path == lista_colaboradores_url %}active{% endif %}">
+      <i class="fas fa-users"></i> Ver Colaboradores
+    </a>
+    <a href="{{ protocolo_create_url }}" class="{% if request.path == protocolo_create_url %}active{% endif %}">
+      <i class="fas fa-envelope"></i> Protocolo de Correspondência
+    </a>
+    <a href="{{ lista_patrimonios_url }}" class="{% if request.path == lista_patrimonios_url %}active{% endif %}">
+      <i class="fas fa-archive"></i> Inventário de Patrimônios
+    </a>
+  {% endif %}
+
+  {# 🔹 Todos os usuários podem solicitar compra #}
+  {% url 'solicitar_compra' as solicitar_compra_url %}
+  <a href="{{ solicitar_compra_url }}" class="{% if request.path == solicitar_compra_url %}active{% endif %}">
+    <i class="fas fa-shopping-cart"></i> Solicitar Compra
+  </a>
+
+  {# 🔹 Apenas admin e setor geral podem gerenciar solicitações #}
+  {% if is_admin or pertence_geral %}
+    {% url 'gerenciar_solicitacoes' as gerenciar_solicitacoes_url %}
+    <a href="{{ gerenciar_solicitacoes_url }}" class="{% if request.path == gerenciar_solicitacoes_url %}active{% endif %}">
+      <i class="fas fa-tasks"></i> Gerenciar Solicitações
+    </a>
+  {% endif %}
+
+  <a href="{% url 'logout' %}">
+    <i class="fas fa-sign-out-alt"></i> Sair
+  </a>
+</div>
+
+    <!-- CONTEÚDO PRINCIPAL -->
+    <div class="content">
+            <h1>Gerenciar Usuários</h1>
+            <p>Visualize e edite os usuários do sistema</p>
+    
+        <div class="table-container">
+            <table class="users-table">
+                <thead>
+                    <tr>
+                        <th>Usuário</th>
+                        <th>Email</th>
+                        <th>Grupos</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for u in usuarios %}
+                    <tr>
+                        <td>{{ u.username }}</td>
+                        <td>{{ u.email }}</td>
+                        <td>
+                            {% for g in u.groups.all %}
+                                <span class="group-badge">{{ g.name }}</span>
+                            {% empty %}
+                                <span style="color: #999; font-style: italic;">Sem grupo</span>
+                            {% endfor %}
+                        </td>
+                        <td>
+                            <button class="action-btn" onclick="abrirModal('{{u.id}}','{{u.username}}','{{u.email}}','{{u.groups.first.id}}')">
+                                <span>Editar</span>
+                            </button>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="4" class="empty-message">Nenhum usuário encontrado</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Editar Usuário</h2>
+                <span class="close" onclick="fecharModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <form method="post">
+                    {% csrf_token %}
+                    <input type="hidden" id="user_id" name="user_id">
+                    
+                    <div class="form-group">
+                        <label for="username">Usuário:</label>
+                        <input type="text" id="username" name="username" class="form-control" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="email">Email:</label>
+                        <input type="email" id="email" name="email" class="form-control" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="senha">Senha (nova):</label>
+                        <input type="password" name="senha" class="form-control">
+                        <div class="password-note">Deixe em branco para manter a senha atual</div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="grupo">Grupo:</label>
+                        <select id="grupo" name="grupo" class="form-control" required>
+                            {% for g in groups %}
+                                <option value="{{g.id}}">{{g.name}}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    
+                    <button type="submit" class="submit-btn">Salvar Alterações</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+   <script>
+  // --- SIDEBAR ---
+  function toggleSidebar() {
+    const sidebar = document.getElementById('sidebar');
+    sidebar.classList.toggle('mobile-open');
+  }
+
+  // Fechar sidebar ao clicar fora (mobile)
+  document.addEventListener('click', function(event) {
+    const sidebar = document.getElementById('sidebar');
+    const menuToggle = document.querySelector('.menu-toggle');
+    
+    if (window.innerWidth <= 768 && 
+        !sidebar.contains(event.target) && 
+        !menuToggle.contains(event.target)) {
+      sidebar.classList.remove('mobile-open');
+    }
+  });
+
+  // --- MODAL DE USUÁRIO ---
+  function abrirModal(id, username, email, grupoId) {
+    document.getElementById('modal').style.display = 'block';
+    document.getElementById('user_id').value = id;
+    document.getElementById('username').value = username;
+    document.getElementById('email').value = email;
+    document.getElementById('grupo').value = grupoId || '';
+  }
+
+  function fecharModal() {
+    document.getElementById('modal').style.display = 'none';
+  }
+
+  // Fechar modal ao clicar fora
+  window.onclick = function(event) {
+    const modal = document.getElementById('modal');
+    if (event.target === modal) {
+      fecharModal();
+    }
+  }
+
+  // --- RESPONSIVIDADE (debounce no resize) ---
+  let resizeTimeout;
+  window.addEventListener('resize', function() {
+    clearTimeout(resizeTimeout);
+    resizeTimeout = setTimeout(function() {
+      const sidebar = document.getElementById('sidebar');
+      if (window.innerWidth > 768) {
+        sidebar.classList.remove('mobile-open');
+      }
+    }, 250);
+  });
+
+        // --- NOTIFICAÇÕES ---
+  function toggleNotificacoes() {
+    const container = document.getElementById('notificacoes-container');
+    container.style.display = container.style.display === 'block' ? 'none' : 'block';
+  }
+
+  function atualizarNotificacoes() {
+    fetch("{% url 'notificacoes' %}")
+      .then(res => res.json())
+      .then(data => {
+        const container = document.getElementById('notificacoes-container');
+        const dropdown = document.getElementById('notificacoes-dropdown');
+        container.innerHTML = '';
+
+        if (data.notificacoes.length === 0) {
+          container.innerHTML = '<p style="padding:10px;">Nenhuma notificação</p>';
+          dropdown.classList.remove('has-notifications');
+        } else {
+          dropdown.classList.add('has-notifications');
+          data.notificacoes.forEach(n => {
+            const div = document.createElement('div');
+            div.classList.add('notif-item');
+            div.style.padding = '10px';
+            div.style.borderBottom = '1px solid #eee';
+            div.style.display = 'flex';
+            div.style.justifyContent = 'space-between';
+            div.style.alignItems = 'center';
+            div.innerHTML = `
+              <span>${n.mensagem}</span>
+              <button style="background:#ea005f;color:white;border:none;padding:4px 8px;border-radius:3px;cursor:pointer;" onclick="marcarVista(${n.id})">✔</button>
+            `;
+            container.appendChild(div);
+          });
+        }
+      });
+  }
+
+  function marcarVista(id) {
+    fetch("{% url 'marcar_vista' %}", {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'X-CSRFToken': '{{ csrf_token }}'
+      },
+      body: 'id=' + id
+    })
+    .then(res => res.json())
+    .then(data => {
+      if(data.success) atualizarNotificacoes();
+      else alert(data.error);
+    });
+  }
+
+  setInterval(atualizarNotificacoes, 30000);
+  window.onload = atualizarNotificacoes;
+
+  // --- MODAL DE AVATAR ---
+  function openAvatarModal() {
+    document.getElementById('avatarModal').style.display = 'block';
+  }
+
+  function closeAvatarModal() {
+    document.getElementById('avatarModal').style.display = 'none';
+  }
+
+  function setAvatar(src) {
+    document.getElementById('user-avatar').src = src;
+    closeAvatarModal();
+
+    fetch("{% url 'atualizar_avatar' %}", {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'X-CSRFToken': '{{ csrf_token }}'
+      },
+      body: 'avatar=' + encodeURIComponent(src)
+    })
+    .then(res => res.json())
+    .then(data => {
+      if(!data.success) alert('Erro ao salvar avatar: ' + data.error);
+    });
+  }
+</script>
+
+</body>
+</html>

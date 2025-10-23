@@ -1,1 +1,1 @@
-# LibanoStock
+# Sistema_Estoque_Django

@@ -1,0 +1,1335 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+          <link rel="shortcut icon" type="image/x-icon" href="http://182.16.0.126/static/default/Libano%2B%20icone.ico">
+
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <title>Adicionar Produto</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            line-height: 1.6;
+            background-color: #f8f9fa;
+            color: #333;
+        }
+    .navbar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      background: linear-gradient(135deg, #ffffff 0%, #ffffff 100%);
+      color: rgb(0, 0, 0);
+      padding: 12px 20px;
+      box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 1000;
+      transition: all 0.3s ease;
+    }
+
+    .navbar h1 {
+      margin: 0;
+      font-size: 1.4rem;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+    }
+
+    .navbar-links {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .navbar-links span {
+      font-size: 0.95rem;
+      opacity: 0.9;
+    }
+
+    .navbar-links a {
+      color: rgb(0, 0, 0);
+      text-decoration: none;
+      padding: 8px 16px;
+      border-radius: 4px;
+      transition: all 0.3s ease;
+      background: rgba(255, 0, 0, 0.1);
+    }
+
+    .navbar-links a:hover {
+      background: rgba(251, 0, 0, 0.2);
+      transform: translateY(-1px);
+    }
+    .sidebar {
+      position: fixed;
+      top: 60px;
+      left: 0;
+      width: 260px;
+      height: calc(100vh - 60px);
+      background: #ffffff;
+      padding: 25px 0;
+      box-shadow: 2px 0 15px rgba(0,0,0,0.05);
+      overflow-y: auto;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      z-index: 999;
+    }
+
+    .sidebar a {
+      display: flex;
+      align-items: center;
+      color: #555;
+      padding: 12px 25px;
+      text-decoration: none;
+      transition: all 0.3s ease;
+      border-left: 3px solid transparent;
+      margin: 5px 0;
+    }
+
+    .sidebar a:hover {
+      background: #f8f9fa;
+      color: #2c3e50;
+      border-left-color: #ea005f;
+      transform: translateX(5px);
+    }
+
+    .sidebar a strong {
+      font-weight: 600;
+    }
+        /* CONTEÚDO PRINCIPAL */
+        .content {
+            margin-top: 60px;
+            margin-left: 260px;
+            padding: 30px;
+            min-height: calc(100vh - 60px);
+            transition: margin-left 0.3s ease;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+        }
+
+        /* FORM CONTAINER REDUZIDO */
+        .form-container {
+            background: white;
+            width: 100%;
+            margin: 0 auto;
+            padding: 30px; /* Reduzido de 40px */
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+        }
+
+        .page-header {
+            text-align: center;
+            margin-bottom: 25px; /* Reduzido */
+        }
+
+        .page-header h1 {
+            color: #2c3e50;
+            font-size: 1.8rem; /* Reduzido de 2rem */
+            margin-bottom: 8px; /* Reduzido */
+            font-weight: 600;
+        }
+
+        .page-header p {
+            color: #666;
+            font-size: 1rem; /* Reduzido de 1.1rem */
+            line-height: 1.4;
+        }
+
+        /* ESTILIZAÇÃO DO FORMULÁRIO DJANGO */
+        .form-group {
+            margin-bottom: 20px; /* Reduzido de 25px */
+            text-align: left;
+        }
+
+        .form-group p {
+            margin-bottom: 12px; /* Reduzido */
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 6px; /* Reduzido */
+            font-weight: 500;
+            color: #2c3e50;
+            font-size: 0.9rem; /* Reduzido */
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 10px 12px; /* Reduzido */
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 0.95rem; /* Reduzido */
+            transition: all 0.3s ease;
+            font-family: inherit;
+        }
+
+        .form-control:focus {
+            border-color: #3498db;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+        }
+
+        textarea.form-control {
+            min-height: 80px; /* Reduzido de 100px */
+            resize: vertical;
+            line-height: 1.5;
+        }
+
+        select.form-control {
+            background: white;
+            cursor: pointer;
+        }
+
+        /* Campo de setor especial para admin */
+        .campo-setor {
+            background: #f0f7ff;
+            padding: 12px; /* Reduzido */
+            border-radius: 6px; /* Reduzido */
+            border-left: 3px solid #3498db; /* Reduzido */
+            margin-bottom: 15px; /* Reduzido */
+        }
+
+        .campo-setor label {
+            color: #1a73e8;
+            font-weight: 600;
+            font-size: 0.9rem; /* Reduzido */
+        }
+
+        .admin-badge {
+            display: inline-block;
+            background: #3498db;
+            color: white;
+            padding: 1px 6px; /* Reduzido */
+            border-radius: 3px; /* Reduzido */
+            font-size: 0.7rem; /* Reduzido */
+            margin-left: 6px; /* Reduzido */
+            vertical-align: middle;
+        }
+
+        /* Botão com o mesmo estilo */
+        .submit-btn {
+            background: #ea005f;
+            color: white;
+            border: none;
+            padding: 12px 25px; /* Reduzido */
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.95rem; /* Reduzido */
+            font-weight: 500;
+            transition: all 0.3s ease;
+            width: 100%;
+            margin-top: 15px; /* Reduzido */
+        }
+
+        .submit-btn:hover {
+            background: #ad0146;
+            transform: translateY(-2px);
+        }
+
+        /* Link de voltar */
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px; /* Reduzido */
+            color: #3498db;
+            text-decoration: none;
+            margin-top: 20px; /* Reduzido */
+            transition: all 0.3s ease;
+            font-weight: 500;
+            text-align: center;
+            width: 100%;
+            justify-content: center;
+            padding: 8px; /* Reduzido */
+            font-size: 0.9rem; /* Reduzido */
+        }
+
+        .back-link:hover {
+            color: #2980b9;
+            transform: translateX(-3px);
+        }
+
+        /* Mensagens de sucesso/erro */
+        .messages {
+            margin-bottom: 15px; /* Reduzido */
+        }
+
+        .alert {
+            padding: 10px 12px; /* Reduzido */
+            border-radius: 5px;
+            margin-bottom: 12px; /* Reduzido */
+            font-size: 0.9rem; /* Reduzido */
+        }
+
+        .alert-success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .alert-error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        /* Estilo para campos obrigatórios */
+        .field-required label::after {
+            content: " *";
+            color: #e74c3c;
+        }
+
+        /* RESPONSIVIDADE */
+        @media (max-width: 768px) {
+            .navbar {
+                padding: 10px 15px;
+            }
+            
+            .navbar h1 {
+                font-size: 1.2rem;
+            }
+            
+            .navbar-links span {
+                display: none;
+            }
+
+            .sidebar {
+                width: 280px;
+                transform: translateX(-100%);
+            }
+            
+            .sidebar.mobile-open {
+                transform: translateX(0);
+            }
+
+            .content {
+                margin-left: 0;
+                padding: 20px 15px;
+                align-items: flex-start;
+            }
+
+            .form-container {
+                padding: 20px; /* Reduzido para mobile */
+                max-width: 100%;
+            }
+
+            .page-header h1 {
+                font-size: 1.5rem; /* Ajustado para mobile */
+            }
+
+            .menu-toggle {
+                display: block;
+                background: none;
+                border: none;
+                color: #000000;
+                font-size: 1.5rem;
+                cursor: pointer;
+                padding: 5px;
+            }
+        }
+
+        @media (min-width: 769px) {
+            .menu-toggle {
+                display: none;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .form-container {
+                padding: 15px; /* Mais reduzido para telas pequenas */
+            }
+            
+            .page-header h1 {
+                font-size: 1.3rem;
+            }
+            
+            .page-header p {
+                font-size: 0.9rem;
+            }
+            
+            .form-control {
+                padding: 8px 10px;
+            }
+            
+            .submit-btn {
+                padding: 10px 20px;
+            }
+        }
+
+        /* Scrollbar customizada para sidebar */
+        .sidebar::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .sidebar::-webkit-scrollbar-thumb {
+            background: #ddd;
+            border-radius: 3px;
+        }
+
+        .sidebar::-webkit-scrollbar-thumb:hover {
+            background: #ccc;
+        }
+
+        /* Melhor alinhamento do conteúdo */
+        .content {
+            min-height: calc(100vh - 60px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+            .navbar-logo {
+    height: 42px;
+    width: auto;
+}
+        .sidebar a.active { border-left-color:#ea005f; font-weight:600; color:#2c3e50; }
+
+/* Modal genérico */
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 2000;
+  left: 0; top: 0;
+  width: 100%; height: 100%;
+  background-color: rgba(0,0,0,0.5);
+}
+.modal-content {
+  background-color: #fff;
+  margin: 15% auto;
+  padding: 20px;
+  border-radius: 8px;
+  width: 90%;
+  max-width: 400px;
+  text-align: center;
+}
+.modal-actions {
+  margin-top: 20px;
+  display: flex;
+  justify-content: space-around;
+}
+.modal-actions button {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: 500;
+}
+#confirmYes {
+  background: #ea005f;
+  color: #fff;
+}
+#confirmNo {
+  background: #ccc;
+}
+
+/* Overlay de loading */
+#loadingOverlay {
+  display: none;
+  position: fixed;
+  z-index: 3000;
+  left: 0; top: 0;
+  width: 100%; height: 100%;
+  background-color: rgba(255,255,255,0.9);
+  text-align: center;
+  padding-top: 20%;
+  font-size: 1.2rem;
+  color: #333;
+}
+.spinner {
+  margin: 0 auto 15px;
+  border: 5px solid #f3f3f3;
+  border-top: 5px solid #ea005f;
+  border-radius: 50%;
+  width: 50px; height: 50px;
+  animation: spin 1s linear infinite;
+}
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+.sidebar a i {
+  margin-right: 8px; /* ajusta o espaço entre ícone e texto */
+}.user-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%; /* deixa circular */
+  object-fit: cover;
+  margin-right: -14px;
+}
+/* Container principal das notificações */
+#notificacoes-dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+/* Ícone do sino */
+#notificacoes-dropdown .fa-bell {
+  font-size: 1.2rem;
+  cursor: pointer;
+  color: #666;
+  transition: all 0.3s ease;
+  padding: 8px;
+  border-radius: 50%;
+}
+
+#notificacoes-dropdown .fa-bell:hover {
+  color: #333;
+  background-color: #f5f5f5;
+  transform: scale(1.1);
+}
+
+/* Container das notificações */
+#notificacoes-container {
+  display: none;
+  position: absolute;
+  right: 0;
+  top: 100%;
+  background: white;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  width: 320px;
+  max-height: 400px;
+  overflow-y: auto;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+  z-index: 10000;
+  animation: fadeIn 0.2s ease-in-out;
+}
+
+/* Indicador de notificações não lidas */
+#notificacoes-dropdown.has-notifications .fa-bell {
+  color: #007bff;
+  position: relative;
+}
+
+#notificacoes-dropdown.has-notifications .fa-bell::after {
+  content: '';
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  width: 8px;
+  height: 8px;
+  background-color: #ff4757;
+  border-radius: 50%;
+  border: 2px solid white;
+}
+
+/* Estados do dropdown */
+#notificacoes-container.show {
+  display: block;
+}
+
+#notificacoes-container.hidden {
+  display: none;
+}
+
+/* Scrollbar personalizada */
+#notificacoes-container::-webkit-scrollbar {
+  width: 6px;
+}
+
+#notificacoes-container::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 0 8px 8px 0;
+}
+
+#notificacoes-container::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 3px;
+}
+
+#notificacoes-container::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}
+#notificacoes-dropdown.has-notifications .fa-bell::after {
+  content: '';
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  width: 8px;
+  height: 8px;
+  background-color: #ff4757;
+  border-radius: 50%;
+  border: 2px solid white;
+}
+/* Animações */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Responsividade */
+@media (max-width: 480px) {
+  #notificacoes-container {
+    width: 280px;
+    right: -50px;
+  }
+}
+
+/* Estado vazio */
+#notificacoes-container:empty::before {
+  content: "Nenhuma notificação";
+  display: block;
+  text-align: center;
+  padding: 20px;
+  color: #999;
+  font-style: italic;
+}
+/* Modal para escolher avatar */
+.modal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: transparent;
+  z-index: 1000;
+}
+
+.modal.show {
+  animation: modalBackdropIn 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.modal-content {
+  position: relative;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  margin: 10% auto;
+  padding: 40px 30px;
+  width: 90%;
+  max-width: 500px;
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  box-shadow: 
+    0 25px 50px rgba(0, 0, 0, 0.15),
+    0 0 0 1px rgba(255, 255, 255, 0.3);
+  opacity: 0;
+  transform: scale(0.8) translateY(-30px);
+  animation: modalContentIn 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) 0.1s forwards;
+}
+
+.close {
+  position: absolute;
+  top: 20px;
+  right: 25px;
+  color: #666;
+  font-size: 26px;
+  font-weight: 300;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(10px);
+}
+
+.close:hover {
+  color: #ff4757;
+  background: rgba(255, 71, 87, 0.1);
+  transform: rotate(90deg) scale(1.1);
+}
+
+.modal-content h3 {
+  margin-bottom: 35px;
+  color: #1a1a1a;
+  font-size: 1.5rem;
+  text-align: center;
+  font-weight: 600;
+  letter-spacing: -0.5px;
+}
+
+.avatar-options {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 25px;
+  justify-items: center;
+  padding: 15px 0;
+}
+
+.avatar-options img {
+  width: 85px;
+  height: 85px;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+  border: 2px solid transparent;
+  background: rgba(255, 255, 255, 0.9);
+  box-shadow: 
+    0 8px 25px rgba(0, 0, 0, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.8);
+  opacity: 0;
+  transform: scale(0.5) rotate(-15deg);
+  animation: avatarStaggerIn 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+.avatar-options img:nth-child(1) { animation-delay: 0.2s; }
+.avatar-options img:nth-child(2) { animation-delay: 0.25s; }
+.avatar-options img:nth-child(3) { animation-delay: 0.3s; }
+.avatar-options img:nth-child(4) { animation-delay: 0.35s; }
+.avatar-options img:nth-child(5) { animation-delay: 0.4s; }
+.avatar-options img:nth-child(6) { animation-delay: 0.45s; }
+
+.avatar-options img:hover {
+  transform: scale(1.15) translateY(-8px);
+  border-color: #4a6ee0;
+  box-shadow: 
+    0 15px 35px rgba(74, 110, 224, 0.25),
+    0 0 0 4px rgba(74, 110, 224, 0.1);
+}
+
+.avatar-options img:active {
+  transform: scale(1.05) translateY(-2px);
+  transition: all 0.2s ease;
+}
+
+/* Animações refinadas */
+@keyframes modalBackdropIn {
+  0% {
+    background-color: transparent;
+  }
+  100% {
+    background-color: rgba(0, 0, 0, 0.4);
+  }
+}
+
+@keyframes modalContentIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.8) translateY(-30px);
+  }
+  70% {
+    transform: scale(1.02) translateY(5px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes avatarStaggerIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.5) rotate(-15deg);
+  }
+  70% {
+    transform: scale(1.05) rotate(5deg);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) rotate(0deg);
+  }
+}
+
+/* Efeito de brilho sutil no hover */
+.avatar-options img::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  border-radius: 50%;
+  background: linear-gradient(45deg, transparent, rgba(74, 110, 224, 0.1), transparent);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  z-index: -1;
+}
+
+.avatar-options img:hover::before {
+  opacity: 1;
+  animation: gentleShine 2s ease-in-out infinite;
+}
+
+@keyframes gentleShine {
+  0%, 100% {
+    background-position: -200% 0;
+  }
+  50% {
+    background-position: 200% 0;
+  }
+}
+
+/* Responsividade */
+@media (max-width: 600px) {
+  .modal-content {
+    margin: 15% auto;
+    padding: 30px 20px;
+    width: 95%;
+  }
+  
+  .avatar-options {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+  }
+  
+  .avatar-options img {
+    width: 75px;
+    height: 75px;
+  }
+  
+  .modal-content h3 {
+    font-size: 1.3rem;
+  }
+}
+
+@media (max-width: 400px) {
+  .avatar-options {
+    gap: 15px;
+  }
+  
+  .avatar-options img {
+    width: 65px;
+    height: 65px;
+  }
+  
+  .modal-content {
+    padding: 25px 15px;
+  }
+}
+#notificacoes-dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+/* Ícone do sino */
+#notificacoes-dropdown .fa-bell {
+  font-size: 1.2rem;
+  cursor: pointer;
+  color: #666;
+  transition: all 0.3s ease;
+  padding: 8px;
+  border-radius: 50%;
+}
+
+#notificacoes-dropdown .fa-bell:hover {
+  color: #333;
+  background-color: #f5f5f5;
+  transform: scale(1.1);
+}
+
+#notificacoes-container {
+  display: none;
+  position: absolute;
+  right: 0;
+  top: 100%;
+  background: white;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  width: 320px;
+  max-height: 400px;
+  overflow-y: auto;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+  z-index: 10000;
+  animation: fadeIn 0.2s ease-in-out;
+}
+
+/* Indicador de notificações não lidas */
+#notificacoes-dropdown.has-notifications .fa-bell {
+  color: #007bff;
+  position: relative;
+}
+
+#notificacoes-dropdown.has-notifications .fa-bell::after {
+  content: '';
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  width: 8px;
+  height: 8px;
+  background-color: #ff4757;
+  border-radius: 50%;
+  border: 2px solid white;
+}
+
+/* Estados do dropdown */
+#notificacoes-container.show {
+  display: block;
+}
+
+#notificacoes-container.hidden {
+  display: none;
+}
+
+/* Scrollbar personalizada */
+#notificacoes-container::-webkit-scrollbar {
+  width: 6px;
+}
+
+#notificacoes-container::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 0 8px 8px 0;
+}
+
+#notificacoes-container::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 3px;
+}
+
+#notificacoes-container::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}
+#notificacoes-dropdown.has-notifications .fa-bell::after {
+  content: '';
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  width: 8px;
+  height: 8px;
+  background-color: #ff4757;
+  border-radius: 50%;
+  border: 2px solid white;
+}
+/* Animações */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Responsividade */
+@media (max-width: 480px) {
+  #notificacoes-container {
+    width: 280px;
+    right: -50px;
+  }
+}
+.user-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-right: 8px;
+  border: 2px solid #ea005f;
+    cursor: pointer;
+
+}
+/* Estado vazio */
+#notificacoes-container:empty::before {
+  content: "Nenhuma notificação";
+  display: block;
+  text-align: center;
+  padding: 20px;
+  color: #999;
+  font-style: italic;
+}
+.sidebar::-webkit-scrollbar {
+  display: none; /* Chrome, Safari */
+}
+  </style>
+</head>
+<body>
+<div class="navbar">
+  <img src="https://faculdadelibano.edu.br/_next/image?url=%2Froot%2Flogo-website-colorida.webp&w=384&q=75" 
+       alt="Faculdade Libano" class="navbar-logo">
+  <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
+
+  <div class="navbar-links">
+    <img id="user-avatar" 
+         src="{{ request.user.profile.avatar_url }}" 
+         alt="Avatar" 
+         class="user-avatar" 
+         onclick="openAvatarModal()" >
+         
+    <span id="user-info" onclick="openAvatarModal()" style="cursor:pointer;">
+      <strong>{{ request.user.username }}</strong>
+      {% if not is_admin %}
+        – <strong>{{ request.user.groups.first.name }}</strong>
+      {% else %}
+        – <strong>Admin</strong>
+      {% endif %}
+    </span>
+
+    <!-- Ícone de notificações -->
+    <div id="notificacoes-dropdown">
+      <i class="fas fa-bell notificacao-icone" onclick="toggleNotificacoes()"></i>
+      <div id="notificacoes-container" class="notificacoes-dropdown">
+        <!-- notificações serão inseridas aqui via JS -->
+      </div>
+    </div>
+
+    <!-- Logout -->
+    <a href="{% url 'logout' %}">Sair</a>
+  </div>
+</div>
+
+<!-- Modal para escolher avatar -->
+<div id="avatarModal" class="modal">
+  <div class="modal-content">
+    <span class="close" onclick="closeAvatarModal()">&times;</span>
+    <h3>Escolha seu avatar {{ request.user.username }}</h3>
+<div class="avatar-options">
+      <img src="https://cdn-icons-png.flaticon.com/512/149/149071.png" onclick="setAvatar(this.src)" alt="Neutro">
+      <img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" onclick="setAvatar(this.src)" alt="Masculino1">
+      <img src="https://cdn-icons-png.flaticon.com/512/219/219958.png" onclick="setAvatar(this.src)" alt="Masculino2">
+      <img src="https://cdn-icons-png.flaticon.com/512/6997/6997615.png" onclick="setAvatar(this.src)" alt="Feminino1">
+      <img src="https://cdn-icons-png.flaticon.com/512/6997/6997662.png" onclick="setAvatar(this.src)" alt="Feminino2">
+      <img src="https://cdn-icons-png.flaticon.com/512/219/219967.png" onclick="setAvatar(this.src)" alt="Feminino3">
+    </div>
+  </div>
+</div>
+
+<div class="sidebar" id="sidebar">
+
+  {% url 'index' as index_url %}
+  <a href="{{ index_url }}" class="{% if request.path == index_url %}active{% endif %}">
+    <i class="fas fa-home"></i> Início
+  </a>
+
+  {% if is_admin %}
+    {% url 'produtos_setor' 'todos' as produtos_todos_url %}
+    <a href="{{ produtos_todos_url }}" class="{% if request.path == produtos_todos_url %}active{% endif %}">
+      <i class="fas fa-boxes"></i> Estoque Total
+    </a>
+  {% else %}
+    {% for setor in hub_info %}
+      {% url 'produtos_setor' setor.nome_setor as setor_url %}
+      <a href="{{ setor_url }}" class="{% if request.path == setor_url %}active{% endif %}">
+        <i class="fas fa-box"></i> Estoque - <strong>{{ setor.nome_setor }}</strong>
+      </a>
+    {% endfor %}
+  {% endif %}
+
+  {% url 'adicionar_produto' as adicionar_produto_url %}
+  <a href="{{ adicionar_produto_url }}" class="{% if request.path == adicionar_produto_url %}active{% endif %}">
+    <i class="fas fa-plus-circle"></i> Adicionar Produto
+  </a>
+
+  {% if is_admin %}
+    {% url 'adicionar_usuario' as adicionar_usuario_url %}
+    {% url 'gerenciar_usuarios' as gerenciar_usuarios_url %}
+    <a href="{{ adicionar_usuario_url }}" class="{% if request.path == adicionar_usuario_url %}active{% endif %}">
+      <i class="fas fa-user-plus"></i> Adicionar Usuário
+    </a>
+    <a href="{{ gerenciar_usuarios_url }}" class="{% if request.path == gerenciar_usuarios_url %}active{% endif %}">
+      <i class="fas fa-users-cog"></i> Gerenciar Usuários
+    </a>
+  {% endif %}
+
+  {% if is_admin %}
+    {% url 'movimentacoes' as movimentacoes_url %}
+    {% url 'dashboard_graficos' as dashboard_url %}
+    <a href="{{ movimentacoes_url }}" class="{% if request.path == movimentacoes_url %}active{% endif %}">
+      <i class="fas fa-exchange-alt"></i> Ver Movimentações
+    </a>
+    <a href="{{ dashboard_url }}" class="{% if request.path == dashboard_url %}active{% endif %}">
+      <i class="fas fa-chart-line"></i> Dashboard
+    </a>
+  {% endif %}
+
+  {% if is_admin or pertence_geral %}
+    {% url 'colaborador_create' as colaborador_create_url %}
+    {% url 'lista_colaboradores' as lista_colaboradores_url %}
+    {% url 'protocolo_create' as protocolo_create_url %}
+    {% url 'lista_patrimonios' as lista_patrimonios_url %}
+    <a href="{{ colaborador_create_url }}" class="{% if request.path == colaborador_create_url %}active{% endif %}">
+      <i class="fas fa-user-plus"></i> Cadastrar Colaborador
+    </a>
+    <a href="{{ lista_colaboradores_url }}" class="{% if request.path == lista_colaboradores_url %}active{% endif %}">
+      <i class="fas fa-users"></i> Ver Colaboradores
+    </a>
+    <a href="{{ protocolo_create_url }}" class="{% if request.path == protocolo_create_url %}active{% endif %}">
+      <i class="fas fa-envelope"></i> Protocolo de Correspondência
+    </a>
+    <a href="{{ lista_patrimonios_url }}" class="{% if request.path == lista_patrimonios_url %}active{% endif %}">
+      <i class="fas fa-archive"></i> Inventário de Patrimônios
+    </a>
+  {% endif %}
+
+  {# 🔹 Todos os usuários podem solicitar compra #}
+  {% url 'solicitar_compra' as solicitar_compra_url %}
+  <a href="{{ solicitar_compra_url }}" class="{% if request.path == solicitar_compra_url %}active{% endif %}">
+    <i class="fas fa-shopping-cart"></i> Solicitar Compra
+  </a>
+
+  {# 🔹 Apenas admin e setor geral podem gerenciar solicitações #}
+  {% if is_admin or pertence_geral %}
+    {% url 'gerenciar_solicitacoes' as gerenciar_solicitacoes_url %}
+    <a href="{{ gerenciar_solicitacoes_url }}" class="{% if request.path == gerenciar_solicitacoes_url %}active{% endif %}">
+      <i class="fas fa-tasks"></i> Gerenciar Solicitações
+    </a>
+  {% endif %}
+
+  <a href="{% url 'logout' %}">
+    <i class="fas fa-sign-out-alt"></i> Sair
+  </a>
+</div>
+
+    <!-- CONTEÚDO PRINCIPAL -->
+    <div class="content">
+        <div class="form-container">
+            <div class="page-header">
+                <h1>Adicionar Novo Produto</h1>
+                <p>Preencha os dados do produto para adicioná-lo ao estoque</p>
+            </div>
+
+            <!-- Exibir mensagens -->
+            {% if messages %}
+            <div class="messages">
+                {% for message in messages %}
+                <div class="alert alert-{{ message.tags }}">
+                    {{ message }}
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            <form method="post">
+                {% csrf_token %}
+                                {% for field in form %}
+                    <div class="form-group {% if field.field.required %}field-required{% endif %}">
+                        {% if field.name == 'setor' and is_admin %}
+                            <div class="campo-setor">
+                                <label for="{{ field.id_for_label }}">
+                                    {{ field.label }}
+                                    <span class="admin-badge">Admin</span>
+                                </label>
+                                {{ field }}
+                            </div>
+                        {% else %}
+                            <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                            {{ field }}
+                        {% endif %}
+                        
+                        {% if field.help_text %}
+                            <small style="color: #666; font-size: 0.8rem; display: block; margin-top: 4px;">
+                                {{ field.help_text }}
+                            </small>
+                        {% endif %}
+                        
+                        {% if field.errors %}
+                            <div style="color: #e74c3c; font-size: 0.8rem; margin-top: 4px;">
+                                {% for error in field.errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+
+                <button type="submit" class="submit-btn">Adicionar Produto</button>
+            </form>
+        </div>
+    </div>
+<!-- Modal de confirmação -->
+<div id="confirmModal" class="modal">
+  <div class="modal-content">
+    <h2>Confirmar adição</h2>
+    <p>Tem certeza que deseja adicionar este produto ao estoque?</p>
+    <div class="modal-actions">
+      <button id="confirmYes">Sim</button>
+      <button id="confirmNo">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Tela de loading -->
+<div id="loadingOverlay">
+  <div class="spinner"></div>
+  <p>Enviando para o banco de dados...</p>
+</div>
+
+<script>
+  // === CONFIRMAÇÃO DE ENVIO DO FORMULÁRIO ===
+  const form = document.querySelector('form');
+  const modal = document.getElementById('confirmModal');
+  const btnYes = document.getElementById('confirmYes');
+  const btnNo = document.getElementById('confirmNo');
+  const loadingOverlay = document.getElementById('loadingOverlay');
+
+  if (form && modal && btnYes && btnNo && loadingOverlay) {
+    form.addEventListener('submit', function(e) {
+      e.preventDefault();
+      modal.style.display = 'block';
+    });
+
+    btnNo.addEventListener('click', function() {
+      modal.style.display = 'none';
+    });
+
+    btnYes.addEventListener('click', function() {
+      modal.style.display = 'none';
+      loadingOverlay.style.display = 'block';
+      setTimeout(() => form.submit(), 200);
+    });
+  }
+
+  // === MENU LATERAL (SIDEBAR) ===
+  function toggleSidebar() {
+    const sidebar = document.getElementById('sidebar');
+    if (sidebar) sidebar.classList.toggle('mobile-open');
+  }
+
+  // Fecha sidebar ao clicar fora (mobile)
+  document.addEventListener('click', function(event) {
+    const sidebar = document.getElementById('sidebar');
+    const menuToggle = document.querySelector('.menu-toggle');
+    if (
+      sidebar &&
+      menuToggle &&
+      window.innerWidth <= 768 &&
+      !sidebar.contains(event.target) &&
+      !menuToggle.contains(event.target)
+    ) {
+      sidebar.classList.remove('mobile-open');
+    }
+  });
+
+  // === APLICAÇÃO DE ESTILOS E PLACEHOLDERS NOS CAMPOS DO FORMULÁRIO ===
+  document.addEventListener('DOMContentLoaded', function() {
+    const formFields = document.querySelectorAll('input, select, textarea');
+    formFields.forEach(field => {
+      field.classList.add('form-control');
+      if (!field.getAttribute('placeholder') && field.type !== 'submit') {
+        const label = document.querySelector(`label[for="${field.id}"]`);
+        if (label) field.setAttribute('placeholder', `Digite ${label.textContent.toLowerCase()}`);
+      }
+    });
+
+    const firstField = document.querySelector('input:not([type="hidden"]), select, textarea');
+    if (firstField) firstField.focus();
+
+    const quantityField = document.querySelector('input[type="number"]');
+    if (quantityField) {
+      quantityField.addEventListener('input', e => {
+        if (e.target.value < 0) e.target.value = 0;
+      });
+    }
+  });
+
+  // === RESPONSIVIDADE: debounce no resize ===
+  let resizeTimeout; // <- apenas UMA vez declarada
+  window.addEventListener('resize', function() {
+    clearTimeout(resizeTimeout);
+    resizeTimeout = setTimeout(() => {
+      const sidebar = document.getElementById('sidebar');
+      if (window.innerWidth > 768 && sidebar) {
+        sidebar.classList.remove('mobile-open');
+      }
+    }, 250);
+  });
+
+  // === MARCAR LINKS ATIVOS NO SIDEBAR ===
+  document.addEventListener('DOMContentLoaded', () => {
+    const sidebarLinks = document.querySelectorAll('.sidebar a');
+    let currentPath = window.location.pathname.replace(/\/$/, ''); // remove barra final
+
+    sidebarLinks.forEach(link => {
+      link.classList.remove('active');
+      const linkPath = link.getAttribute('href').replace(/\/$/, '');
+      if (linkPath === currentPath) link.classList.add('active');
+    });
+  });
+
+  // === NOTIFICAÇÕES ===
+  function toggleNotificacoes() {
+    const container = document.getElementById('notificacoes-container');
+    if (container)
+      container.style.display = container.style.display === 'block' ? 'none' : 'block';
+  }
+
+  function atualizarNotificacoes() {
+    fetch("{% url 'notificacoes' %}")
+      .then(res => res.json())
+      .then(data => {
+        const container = document.getElementById('notificacoes-container');
+        const dropdown = document.getElementById('notificacoes-dropdown');
+        if (!container || !dropdown) return;
+
+        container.innerHTML = '';
+
+        if (data.notificacoes.length === 0) {
+          container.innerHTML = '<p style="padding:10px;">Nenhuma notificação</p>';
+          dropdown.classList.remove('has-notifications');
+        } else {
+          dropdown.classList.add('has-notifications');
+          data.notificacoes.forEach(n => {
+            const div = document.createElement('div');
+            div.classList.add('notif-item');
+            div.style.cssText = `
+              padding:10px;
+              border-bottom:1px solid #eee;
+              display:flex;
+              justify-content:space-between;
+              align-items:center;
+            `;
+            div.innerHTML = `
+              <span>${n.mensagem}</span>
+              <button style="background:#ea005f;color:white;border:none;padding:4px 8px;border-radius:3px;cursor:pointer;" onclick="marcarVista(${n.id})">✔</button>
+            `;
+            container.appendChild(div);
+          });
+        }
+      });
+  }
+
+  function marcarVista(id) {
+    fetch("{% url 'marcar_vista' %}", {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'X-CSRFToken': '{{ csrf_token }}'
+      },
+      body: 'id=' + id
+    })
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) atualizarNotificacoes();
+        else alert(data.error);
+      });
+  }
+
+  setInterval(atualizarNotificacoes, 30000);
+  window.onload = atualizarNotificacoes;
+    // Abrir modal
+function openAvatarModal() {
+  document.getElementById('avatarModal').style.display = 'block';
+}
+
+// Fechar modal
+function closeAvatarModal() {
+  document.getElementById('avatarModal').style.display = 'none';
+}
+
+function setAvatar(src) {
+    document.getElementById('user-avatar').src = src;
+    closeAvatarModal();
+
+    fetch("{% url 'atualizar_avatar' %}", {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'X-CSRFToken': '{{ csrf_token }}'
+        },
+        body: 'avatar=' + encodeURIComponent(src)
+    })
+    .then(res => res.json())
+    .then(data => {
+        if(!data.success){
+            alert('Erro ao salvar avatar: ' + data.error);
+        }
+    });
+}
+</script>
+
+</body>
+</html>
